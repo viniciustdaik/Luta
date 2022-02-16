@@ -6,20 +6,27 @@ var isJumping1 = false, isJumping2 = false;
 var player1health = 100, player2health = 100;
 var isBlocking1 = false, isBlocking2 = false;
 var left1 = false, right1 = true, left2 = true, right2 = false;
-var backgroundimg, redselectbox, redselectboximg, blueselectbox, blueselectboximg,
+var backgroundplanetimg, backgroundsnowimg, 
+redselectbox, redselectboximg, blueselectbox, blueselectboximg,
 birdanm, birdanm2, 
 ding1anm, ding2anm, donganm, 
+snowmanidleanm, snowmanidleanm2, fireanm, fire2anm, 
 trexidleanm, trexidleanm2, trexrunanm, trexrunanm2, trexidleanm2, trexcollided, trexcollided2, 
 fantasmaidle1, fantasmaidle2, fantasmajump1, fantasmajump2;
-var ghostbutton, trexbutton, ding1button, ding2button, dongbutton, birdbutton,
+var ghostbutton, trexbutton, ding1button, ding2button, dongbutton, birdbutton, 
+snowmanbutton, fire1button, fire2button, 
 ghostbuttonover1 = true, trexbuttonover1 = false, ding1buttonover1 = false, 
 ding2buttonover1 = false, dongbuttonover1 = false, birdbuttonover1 = false, 
+snowmanbuttonover1 = false, fire1buttonover1 = false, fire2buttonover1 = false, 
 ghostbuttonover2 = true, trexbuttonover2 = false, ding1buttonover2 = false, 
-ding2buttonover2 = false, dongbuttonover2 = false, birdbuttonover2 = false;
+ding2buttonover2 = false, dongbuttonover2 = false, birdbuttonover2 = false, 
+snowmanbuttonover2 = false, fire1buttonover2 = false, fire2buttonover2 = false;
 var character1selected = "notselected", character2selected = "notselected";
+var mapselected = "notselected", selectrandommap;
 
 function preload(){
-  backgroundimg = loadImage("background.png");
+  backgroundplanetimg = loadImage("backgroundplanet.png");
+  backgroundsnowimg = loadImage("backgroundsnow.png");
   birdanm = loadAnimation("./Personagens/Trex-Dinossauros/bird1.png", 
   "./Personagens/Trex-Dinossauros/bird2.png");
   birdanm2 = loadAnimation("./Personagens/Trex-Dinossauros/bird1_2.png", 
@@ -40,6 +47,10 @@ function preload(){
   fantasmajump2 = loadAnimation("./Personagens/Fantasma/ghost-jumping_2.png")
   redselectboximg = loadImage("redhalfselectbox.png");
   blueselectboximg = loadImage("bluehalfselectbox.png");
+  snowmanidleanm = loadAnimation("./Personagens/Desviando De Fogo/Snowman.png");
+  snowmanidleanm2 = loadAnimation("./Personagens/Desviando De Fogo/Snowman_2.png");
+  fireanm = loadAnimation("./Personagens/Desviando De Fogo/fire1small.png");
+  fire2anm = loadAnimation("./Personagens/Desviando De Fogo/fire2small.png");
 }
 
 function setup(){
@@ -84,6 +95,18 @@ function setup(){
   dongbutton.addAnimation("dong", donganm);
   dongbutton.scale = 1.2;
   
+  snowmanbutton = createSprite(285, 45, 15, 15);
+  snowmanbutton.addAnimation("snowman", snowmanidleanm2);
+  snowmanbutton.scale = 0.1;
+  
+  fire1button = createSprite(325, 45, 15, 15);
+  fire1button.addAnimation("fire1", fireanm);
+  fire1button.scale = 0.055;
+  
+  fire2button = createSprite(365, 45, 15, 15);
+  fire2button.addAnimation("fire2", fire2anm);
+  fire2button.scale = 0.075;
+  
   player1 = createSprite(width/2 - width/2/2, windowHeight - 55, 20, 20);
   player2 = createSprite(width/2 + width/2/2, windowHeight - 55, 20, 20);
   player1.visible = false;
@@ -96,8 +119,14 @@ function setup(){
 
 function draw(){
   background('white');
-  image(backgroundimg, 0, 0, width, height);
-  
+  if(mapselected == "space"){
+    image(backgroundplanetimg, 0, 0, width, height);
+  }
+
+  if(mapselected == "snow"){
+    image(backgroundsnowimg, 0, 0, width, height);
+  }
+
   textSize(35);
   
   if(player2.x < player1.x){
@@ -142,6 +171,7 @@ function draw(){
     ding2buttonover1 , dongbuttonover1, birdbuttonover1);
     console.log(ghostbuttonover2, trexbuttonover2, ding1buttonover2, 
     ding2buttonover2, dongbuttonover2, birdbuttonover2);
+    selectmap();
     if(/*character1selected == "Fantasma" && character2selected == "Fantasma"
     ||character1selected == "Trex"&&character2selected == "Trex"
     ||character1selected == "Pterodáctilo"&&character2selected == "Pterodáctilo"
@@ -168,7 +198,10 @@ function draw(){
     ||character1selected == "Pterodáctilo"&&keyWentDown("Y")
     ||character1selected == "Ding"&&keyWentDown("Y")
     ||character1selected == "Amigo Do Ding"&&keyWentDown("Y")
-    ||character1selected == "Dong"&&keyWentDown("Y")){
+    ||character1selected == "Dong"&&keyWentDown("Y")
+    ||character1selected == "Boneco De Neve"&&keyWentDown("Y")
+    ||character1selected == "Fogo Laranja"&&keyWentDown("Y")
+    ||character1selected == "Fogo Vermelho"&&keyWentDown("Y")){
       character1selected = "notselected";
       player1.visible = false;
     }
@@ -177,7 +210,10 @@ function draw(){
     ||character2selected == "Pterodáctilo"&&keyWentDown("O")
     ||character2selected == "Ding"&&keyWentDown("O")
     ||character2selected == "Amigo Do Ding"&&keyWentDown("O")
-    ||character2selected == "Dong"&&keyWentDown("O")){
+    ||character2selected == "Dong"&&keyWentDown("O")
+    ||character2selected == "Boneco De Neve"&&keyWentDown("O")
+    ||character2selected == "Fogo Laranja"&&keyWentDown("O")
+    ||character2selected == "Fogo Vermelho"&&keyWentDown("O")){
       character2selected = "notselected";
       player2.visible = false;
     }
@@ -324,6 +360,10 @@ function draw(){
       blueselectbox.y = ding2button.y;
     }
     if(dongbuttonover1 == true&&character1selected == "notselected"){
+      if(keyWentDown("D")){
+        dongbuttonover1 = false;
+        snowmanbuttonover1 = true;
+      }
       if(keyWentDown("A")){
         dongbuttonover1 = false;
         ding2buttonover1 = true;
@@ -334,7 +374,11 @@ function draw(){
       redselectbox.x = dongbutton.x;
       redselectbox.y = dongbutton.y;
     }
-    if(dongbuttonover2 == true&&character2selected == "notselected"){
+    if(dongbuttonover2 == true && character2selected == "notselected"){
+      if(keyWentDown(RIGHT_ARROW)){
+        dongbuttonover2 = false;
+        snowmanbuttonover2 = true;
+      }
       if(keyWentDown(LEFT_ARROW)){
         dongbuttonover2 = false;
         ding2buttonover2 = true;
@@ -345,7 +389,89 @@ function draw(){
     blueselectbox.x = dongbutton.x;
     blueselectbox.y = dongbutton.y;
     }
-
+    if(snowmanbuttonover1 == true && character1selected == "notselected"){
+      if(keyWentDown("D")){
+        fire1buttonover1 = true;
+        snowmanbuttonover1 = false;
+      }
+      if(keyWentDown("A")){
+        dongbuttonover1 = true;
+        snowmanbuttonover1 = false;
+      }
+      if(keyWentDown("space")){
+        character1();
+      }
+      redselectbox.x = snowmanbutton.x;
+      redselectbox.y = snowmanbutton.y;
+    }
+    if(snowmanbuttonover2 == true && character2selected == "notselected"){
+      if(keyWentDown(RIGHT_ARROW)){
+        fire1buttonover2 = true;
+        snowmanbuttonover2 = false;
+      }
+      if(keyWentDown(LEFT_ARROW)){
+        dongbuttonover2 = true;
+        snowmanbuttonover2 = false;
+      }
+      if(keyWentDown("P")){
+        character2();
+      }
+      blueselectbox.x = snowmanbutton.x;
+      blueselectbox.y = snowmanbutton.y;
+    }
+    if(fire1buttonover1 == true && character1selected == "notselected"){
+      if(keyWentDown("D")){
+        fire2buttonover1 = true;
+        fire1buttonover1 = false;
+      }
+      if(keyWentDown("A")){
+        snowmanbuttonover1 = true;
+        fire1buttonover1 = false;
+      }
+      if(keyWentDown("space")){
+        character1();
+      }
+      redselectbox.x = fire1button.x;
+      redselectbox.y = fire1button.y;
+    }
+    if(fire1buttonover2 == true && character2selected == "notselected"){
+      if(keyWentDown(RIGHT_ARROW)){
+        fire2buttonover2 = true;
+        fire1buttonover2 = false;
+      }
+      if(keyWentDown(LEFT_ARROW)){
+        snowmanbuttonover2 = true;
+        fire1buttonover2 = false;
+      }
+      if(keyWentDown("P")){
+        character2();
+      }
+      blueselectbox.x = fire1button.x;
+      blueselectbox.y = fire1button.y;
+    }
+    if(fire2buttonover1 == true && character1selected == "notselected"){
+      if(keyWentDown("A")){
+        fire1buttonover1 = true;
+        fire2buttonover1 = false;
+      }
+      if(keyWentDown("space")){
+        character1();
+      }
+      redselectbox.x = fire2button.x;
+      redselectbox.y = fire2button.y;
+    }
+    if(fire2buttonover2 == true && character2selected == "notselected"){
+      if(keyWentDown(LEFT_ARROW)){
+        fire1buttonover2 = true;
+        fire2buttonover2 = false;
+      }
+      if(keyWentDown("P")){
+        character2();
+      }
+      blueselectbox.x = fire2button.x;
+      blueselectbox.y = fire2button.y;
+    }
+    
   }
   
   //console.log(windowHeight-10);
@@ -362,6 +488,9 @@ function draw(){
     ding1button.visible = false;
     ding2button.visible = false;
     dongbutton.visible = false;
+    snowmanbutton.visible = false;
+    fire1button.visible = false;
+    fire2button.visible = false;
     redselectbox.visible = false;
     blueselectbox.visible = false;
     if(player1health <=0
@@ -485,6 +614,9 @@ function draw(){
     ||mousePressedOver(ding1button)
     ||mousePressedOver(ding2button)
     ||mousePressedOver(dongbutton)
+    ||mousePressedOver(snowmanbutton)
+    ||mousePressedOver(fire1button)
+    ||mousePressedOver(fire2button)
     ||mousePressedOver(scene)){
       reset();
     }
@@ -574,6 +706,24 @@ function character1(){
     player1.scale = 1.2;
     character1selected = "Dong";
   }
+  if(snowmanbuttonover1 == true){
+    player1.addAnimation("snowman", snowmanidleanm2);//right
+    player1.changeAnimation("snowman", snowmanidleanm2);//right
+    player1.scale = 0.1;
+    character1selected = "Boneco De Neve";
+  }
+  if(fire1buttonover1 == true){
+    player1.addAnimation("fire1", fireanm);
+    player1.changeAnimation("fire1", fireanm);
+    player1.scale = 0.055;
+    character1selected = "Fogo Laranja";
+  }
+  if(fire2buttonover1 == true){
+    player1.addAnimation("fire2", fire2anm);
+    player1.changeAnimation("fire2", fire2anm);
+    player1.scale = 0.075;
+    character1selected = "Fogo Vermelho";
+  }
   player1.visible = true;
 }
 
@@ -624,11 +774,30 @@ function character2(){
     player2.scale = 1.2;
     character2selected = "Dong";
   }
+  if(snowmanbuttonover2 == true){
+    player2.addAnimation("snowman", snowmanidleanm);//left
+    player2.changeAnimation("snowman", snowmanidleanm);//left
+    player2.scale = 0.1;
+    character2selected = "Boneco De Neve";
+  }
+  if(fire1buttonover2 == true){
+    player2.addAnimation("fire1", fireanm);
+    player2.changeAnimation("fire1", fireanm);
+    player2.scale = 0.055;
+    character2selected = "Fogo Laranja";
+  }
+  if(fire2buttonover2 == true){
+    player2.addAnimation("fire2", fire2anm);
+    player2.changeAnimation("fire2", fire2anm);
+    player2.scale = 0.075;
+    character2selected = "Fogo Vermelho";
+  }
   player2.visible = true;
 }
 
 function reset(){
   gamestate = "select";
+  mapselected = "notselected";
   character1selected = "notselected";
   character2selected = "notselected";
   player1.visible = false;
@@ -639,10 +808,27 @@ function reset(){
   ding1button.visible = true;
   ding2button.visible = true;
   dongbutton.visible = true;
+  snowmanbutton.visible = true;
+  fire1button.visible = true;
+  fire2button.visible = true;
   player1health = 100;
   player2health = 100;
   player1.x = width/2 - width/2/2;
   player1.y = windowHeight - 55;
   player2.x = width/2 + width/2/2;
   player2.y = windowHeight - 55;
+}
+
+function selectmap(){
+  selectrandommap = Math.round(random(1, 2));
+  if(selectrandommap == 1 && frameCount%0.5 == 0 
+    && gamestate == "select" && mapselected == "notselected"){
+    //image(backgroundplanetimg, 0, 0, width, height);
+    mapselected = "space";
+  }
+  if(selectrandommap == 2 && frameCount%1 == 0 
+    && gamestate == "select" && mapselected == "notselected"){
+    //image(backgroundsnowimg, 0, 0, width, height);
+    mapselected = "snow";
+  }
 }
