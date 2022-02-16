@@ -6,7 +6,7 @@ var isJumping1 = false, isJumping2 = false;
 var player1health = 100, player2health = 100;
 var isBlocking1 = false, isBlocking2 = false;
 var left1 = false, right1 = true, left2 = true, right2 = false;
-var backgroundplanetimg, backgroundsnowimg, 
+var backgroundplanetimg, backgroundsnowimg, backgroundforestimg, backgroundbattlezoneimg, 
 redselectbox, redselectboximg, blueselectbox, blueselectboximg,
 birdanm, birdanm2, 
 ding1anm, ding2anm, donganm, 
@@ -27,6 +27,8 @@ var mapselected = "notselected", selectrandommap;
 function preload(){
   backgroundplanetimg = loadImage("backgroundplanet.png");
   backgroundsnowimg = loadImage("backgroundsnow.png");
+  backgroundforestimg = loadImage("backgroundforest.png");
+  backgroundbattlezoneimg = loadImage("backgroundbattlezone.gif");
   birdanm = loadAnimation("./Personagens/Trex-Dinossauros/bird1.png", 
   "./Personagens/Trex-Dinossauros/bird2.png");
   birdanm2 = loadAnimation("./Personagens/Trex-Dinossauros/bird1_2.png", 
@@ -119,14 +121,22 @@ function setup(){
 
 function draw(){
   background('white');
-  if(mapselected == "space"){
+  if(mapselected == "Espaço"){
     image(backgroundplanetimg, 0, 0, width, height);
   }
-
-  if(mapselected == "snow"){
+  
+  if(mapselected == "Floresta De Neve"){
     image(backgroundsnowimg, 0, 0, width, height);
   }
-
+  
+  if(mapselected == "Floresta Chuvosa"){
+    image(backgroundforestimg, 0, 0, width, height);
+  }
+  
+  if(mapselected == "Zona De Batalha"){
+    image(backgroundbattlezoneimg, 0, 0, width, height);
+  }
+  
   textSize(35);
   
   if(player2.x < player1.x){
@@ -822,15 +832,25 @@ function reset(){
 }
 
 function selectmap(){
-  selectrandommap = Math.round(random(1, 2));
+  selectrandommap = Math.round(random(1, 4));
   if(selectrandommap == 1 && frameCount%0.5 == 0 
     && gamestate == "select" && mapselected == "notselected"){
     //image(backgroundplanetimg, 0, 0, width, height);
-    mapselected = "space";
+    mapselected = "Espaço";
   }
   if(selectrandommap == 2 && frameCount%1 == 0 
     && gamestate == "select" && mapselected == "notselected"){
     //image(backgroundsnowimg, 0, 0, width, height);
-    mapselected = "snow";
+    mapselected = "Floresta De Neve";
+  }
+  if(selectrandommap == 3 && frameCount%1 == 0 
+    && gamestate == "select" && mapselected == "notselected"){
+    //image(backgroundforestimg, 0, 0, width, height);
+    mapselected = "Floresta Chuvosa";
+  }
+  if(selectrandommap == 4 && frameCount%1 == 0 
+    && gamestate == "select" && mapselected == "notselected"){
+    //image(backgroundbattlezoneimg, 0, 0, width, height);
+    mapselected = "Zona De Batalha";
   }
 }
