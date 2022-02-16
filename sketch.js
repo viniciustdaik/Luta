@@ -6,7 +6,7 @@ var isJumping1 = false, isJumping2 = false;
 var player1health = 100, player2health = 100;
 var isBlocking1 = false, isBlocking2 = false;
 var left1 = false, right1 = true, left2 = true, right2 = false;
-var backgroundplanetimg, backgroundsnowimg, backgroundforestimg, backgroundbattlezoneimg, 
+var backgroundplanetimg, backgroundsnowimg, backgroundforestimg, backgroundbattlezoneimg, baseimg, 
 redselectbox, redselectboximg, blueselectbox, blueselectboximg,
 birdanm, birdanm2, 
 ding1anm, ding2anm, donganm, 
@@ -23,11 +23,15 @@ ding2buttonover2 = false, dongbuttonover2 = false, birdbuttonover2 = false,
 snowmanbuttonover2 = false, fire1buttonover2 = false, fire2buttonover2 = false;
 var character1selected = "notselected", character2selected = "notselected";
 var mapselected = "notselected", selectrandommap;
+var basesG, basesactive = false;
+var player1baseY, player2baseY;
+var jumplimit, jumplimit2;
 
 function preload(){
   backgroundplanetimg = loadImage("backgroundplanet.png");
   backgroundsnowimg = loadImage("backgroundsnow.png");
   backgroundforestimg = loadImage("backgroundforest.png");
+  baseimg = loadAnimation("base.png");
   backgroundbattlezoneimg = loadImage("backgroundbattlezone.gif");
   birdanm = loadAnimation("./Personagens/Trex-Dinossauros/bird1.png", 
   "./Personagens/Trex-Dinossauros/bird2.png");
@@ -57,6 +61,11 @@ function preload(){
 
 function setup(){
   createCanvas(windowWidth, windowHeight);
+  
+  jumplimit = windowHeight - 55;
+  jumplimit2 = windowHeight + 50;
+
+  basesG = new Group();
   
   scene = createSprite(width/2, height/2, width, height);
   scene.visible = false;
@@ -131,6 +140,19 @@ function draw(){
   
   if(mapselected == "Floresta Chuvosa"){
     image(backgroundforestimg, 0, 0, width, height);
+    if(basesactive == false){
+      createBases();
+    }
+    if(player1.isTouching(edges)){
+      player1health = 0;
+      player1.visible = false;
+    }
+    if(player2.isTouching(edges)){
+      player2health = 0;
+      player2.visible = false;
+    }
+    player1.collide(basesG);
+    player2.collide(basesG);
   }
   
   if(mapselected == "Zona De Batalha"){
@@ -176,6 +198,10 @@ function draw(){
     }
   }
   if(gamestate == "select"){
+    if(mapselected == "Floresta Chuvosa"){
+      player1.y = player1baseY - 55;
+      player2.y = player2baseY - 55;
+    }
     console.log(character1selected, character2selected);
     console.log(ghostbuttonover1, trexbuttonover1, ding1buttonover1, 
     ding2buttonover1 , dongbuttonover1, birdbuttonover1);
@@ -486,12 +512,13 @@ function draw(){
   
   //console.log(windowHeight-10);
   if(gamestate == "play"){
-  fill('lightgreen');
-  stroke('lime')
-  text("Jogador 1 "+player1health, 45, 45);
-  text("Jogador 2 "+player2health, 45, 75);
-  console.log("C, J, H, B 1: ", isCrouching1, isJumping1, player1health, isBlocking1);
-  console.log("C, J, H, B 2: ", isCrouching2, isJumping2, player2health, isBlocking2);
+    
+    fill('lightgreen');
+    stroke('lime')
+    text("Jogador 1 "+player1health, 45, 45);
+    text("Jogador 2 "+player2health, width - 305, 45);//45, 75
+    console.log("C, J, H, B 1: ", isCrouching1, isJumping1, player1health, isBlocking1);
+    console.log("C, J, H, B 2: ", isCrouching2, isJumping2, player2health, isBlocking2);
     ghostbutton.visible = false;
     trexbutton.visible = false;
     birdbutton.visible = false;
@@ -507,7 +534,7 @@ function draw(){
     ||player2health <=0){
       gamestate = "gameover";
     }
-
+    
     if(player1.isTouching(player2)
     &&keyWentDown("F")&&!keyWentDown("K")
     &&isBlocking1 == false&&isBlocking2 == false){
@@ -536,16 +563,16 @@ function draw(){
       player1health = player1health-10;
     }
     
-    if(keyDown("W")&&player1.y >= windowHeight -55
+    if(keyDown("W")&&player1.y >= jumplimit && jumplimit2 >= player1.y
     &&isCrouching1 == false&&isBlocking1 == false){
-      player1.velocityY = -10;
+      player1.velocityY = -15;
       isJumping1 = true;
       if(character2selected == "Fantasma"){
         if(left1 == true){
-          player1.changeAnimation("ghost", fantasmajump1);
+          //player1.changeAnimation("ghost", fantasmajump1);
         }
         if(right1 == true){
-          player1.changeAnimation("ghost", fantasmajump2);
+          //player1.changeAnimation("ghost", fantasmajump2);
         }
       }
     }
@@ -570,9 +597,9 @@ function draw(){
       isCrouching1 = false;
     }
 
-    if(keyDown(UP_ARROW)&&player2.y >= windowHeight-55
+    if(keyDown(UP_ARROW)&&player2.y >= jumplimit && jumplimit2 >= player2.y
     &&isCrouching2 == false&&isBlocking1 == false){
-      player2.velocityY = -10;
+      player2.velocityY = -15;
       isJumping2 = true;
       if(character2selected == "ghost"){
         if(left2 == true){
@@ -648,8 +675,6 @@ function draw(){
   //player2.collide(edges[1]);
   //player2.collide(edges[3]);
   
-  
-
   drawSprites();
 }
 
@@ -708,26 +733,26 @@ function character1(){
   if(ding1buttonover1 == true){
     player1.addAnimation("ding1", ding1anm);
     player1.changeAnimation("ding1", ding1anm);
-    player1.scale = 1.2;
+    player1.scale = 1.8;
     character1selected = "Ding";
   }
   if(ding2buttonover1 == true){
     player1.addAnimation("ding2", ding2anm);
     player1.changeAnimation("ding2", ding2anm);
-    player1.scale = 1.2;
+    player1.scale = 1.8;
     character1selected = "Amigo Do Ding";
   }
   if(dongbuttonover1 == true){
     player1.addAnimation("dong", donganm);
     player1.changeAnimation("dong", donganm);
-    player1.scale = 1.2;
+    player1.scale = 1.8;
     character1selected = "Dong";
   }
   if(snowmanbuttonover1 == true){
     player2.addAnimation("snowman", snowmanidleanm);//left
     player1.addAnimation("snowman", snowmanidleanm2);//right
     player1.changeAnimation("snowman", snowmanidleanm2);//right
-    player1.scale = 0.1;
+    player1.scale = 0.2;
     character1selected = "Boneco De Neve";
   }
   if(fire1buttonover1 == true){
@@ -777,26 +802,26 @@ function character2(){
   if(ding1buttonover2 == true){
     player2.addAnimation("ding1", ding1anm);
     player2.changeAnimation("ding1", ding1anm);
-    player2.scale = 1.2;
+    player2.scale = 1.8;
     character2selected = "Ding";
   }
   if(ding2buttonover2 == true){
     player2.addAnimation("ding2", ding2anm);
     player2.changeAnimation("ding2", ding2anm);
-    player2.scale = 1.2;
+    player2.scale = 1.8;
     character2selected = "Amigo Do Ding";
   }
   if(dongbuttonover2 == true){
     player2.addAnimation("dong", donganm);
     player2.changeAnimation("dong", donganm);
-    player2.scale = 1.2;
+    player2.scale = 1.8;
     character2selected = "Dong";
   }
   if(snowmanbuttonover2 == true){
     player2.addAnimation("snowman", snowmanidleanm2);//right
     player2.addAnimation("snowman", snowmanidleanm);//left
     player2.changeAnimation("snowman", snowmanidleanm);//left
-    player2.scale = 0.1;
+    player2.scale = 0.2;
     character2selected = "Boneco De Neve";
   }
   if(fire1buttonover2 == true){
@@ -815,6 +840,8 @@ function character2(){
 }
 
 function reset(){
+  basesG.destroyEach();
+  basesactive = false;
   gamestate = "select";
   mapselected = "notselected";
   character1selected = "notselected";
@@ -830,6 +857,8 @@ function reset(){
   snowmanbutton.visible = true;
   fire1button.visible = true;
   fire2button.visible = true;
+  redselectbox.visible = true;
+  blueselectbox.visible = true;
   player1health = 100;
   player2health = 100;
   player1.x = width/2 - width/2/2;
@@ -860,4 +889,31 @@ function selectmap(){
     //image(backgroundbattlezoneimg, 0, 0, width, height);
     mapselected = "Zona De Batalha";
   }
+}
+
+function createBases(){
+  var player1base = createSprite(width/2 - width/2/2, windowHeight - 185);
+  var player2base = createSprite(width/2 + width/2/2, windowHeight - 185);
+  var centralbase = createSprite(width/2, windowHeight - 165);
+  jumplimit = windowHeight - 355;
+  jumplimit2 = centralbase.y - 55;
+  //player1base.debug = true;
+  //player2base.debug = true;
+  //centralbase.debug = true;
+  player1base.setCollider("rectangle", 0, -500, 2650, 650);
+  player2base.setCollider("rectangle", 0, -500, 2650, 650);
+  centralbase.setCollider("rectangle", 0, -500, 2650, 650);
+  player1baseY = player1base.y - 80;
+  player2baseY = player2base.y - 80;
+  player1base.addAnimation("base", baseimg);
+  player2base.addAnimation("base", baseimg);
+  centralbase.addAnimation("base", baseimg);
+  player1base.scale = 0.08;
+  player2base.scale = 0.08;
+  centralbase.scale = 0.08;
+  basesG.add(centralbase);
+  basesG.add(player1base);
+  basesG.add(player2base);
+  basesactive = true;
+
 }
