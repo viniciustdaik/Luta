@@ -613,8 +613,15 @@ function draw(){
     stroke('darkred');
     textAlign("center");
     text("Fim De Jogo!", width/2, height/2);
-    fill('cyan');
+    fill('gold');
     stroke('green');
+    if(player1health <= 0){
+      text("Jogador 2 Ganhou!", width/2, height/2+65);
+    }
+    if(player2health <= 0){
+      text("Jogador 1 Ganhou!", width/2, height/2+65);
+    }
+    fill('cyan');
     text("Clique/Toque Para Jogar De Novo!", width/2, height/2+35);
     if(mousePressedOver(player1)
     ||mousePressedOver(player2)
