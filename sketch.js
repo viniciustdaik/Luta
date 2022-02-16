@@ -707,6 +707,7 @@ function character1(){
     character1selected = "Dong";
   }
   if(snowmanbuttonover1 == true){
+    player2.addAnimation("snowman", snowmanidleanm);//left
     player1.addAnimation("snowman", snowmanidleanm2);//right
     player1.changeAnimation("snowman", snowmanidleanm2);//right
     player1.scale = 0.1;
@@ -775,6 +776,7 @@ function character2(){
     character2selected = "Dong";
   }
   if(snowmanbuttonover2 == true){
+    player2.addAnimation("snowman", snowmanidleanm2);//right
     player2.addAnimation("snowman", snowmanidleanm);//left
     player2.changeAnimation("snowman", snowmanidleanm);//left
     player2.scale = 0.1;
