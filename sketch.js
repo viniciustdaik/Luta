@@ -729,7 +729,8 @@ function character1(){
     player1.addAnimation("bird", birdanm);//left
     player1.addAnimation("bird", birdanm2);//right
     player1.changeAnimation("bird", birdanm2);//right
-    player1.setCollider("rectangle", 0, 0, 90, 185);//bird collision
+    //player1.setCollider("rectangle", 0, 0, 90, 185);//bird collision
+    //soon when all collisions are finished
     player1.scale = 0.58;
     character1selected = "Pterodáctilo";
   }
@@ -799,7 +800,8 @@ function character2(){
     player2.addAnimation("bird", birdanm);//left
     player2.addAnimation("bird2", birdanm2);//right
     player2.changeAnimation("bird", birdanm);//left
-    player2.setCollider("rectangle", 0, 0, 90, 185);//bird collision
+    //player2.setCollider("rectangle", 0, 0, 90, 185);//bird collision
+    //soon when all collisions are finished
     player2.scale = 0.51;
     character2selected = "Pterodáctilo";
   }
