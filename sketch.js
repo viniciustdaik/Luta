@@ -582,13 +582,17 @@ function draw(){
     redselectbox.visible = false;
     blueselectbox.visible = false;
     if(player2health <= 0){
-      player1victory = true;
+      if(player2victory == false){
+        player1victory = true;
+      }
       gamestate = "gameover";
     }
     if(player1health <= 0){
+      if(player1victory == false){
         player2victory = true;
-        gamestate = "gameover";
       }
+      gamestate = "gameover";
+    }
     
     if(player1.isTouching(player2)
     &&keyWentDown("F")&&!keyWentDown("K")
