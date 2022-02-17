@@ -847,6 +847,8 @@ function character2(){
 
 function reset(){
   basesG.destroyEach();
+  jumplimit = windowHeight - 55;
+  jumplimit2 = windowHeight + 50;
   basesactive = false;
   gamestate = "select";
   mapselected = "notselected";
