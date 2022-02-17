@@ -629,8 +629,10 @@ function draw(){
     if(keyWentUp(DOWN_ARROW)){
       isCrouching2 = false;
     }
+
     player1.velocityY = player1.velocityY + 0.8;
     player2.velocityY = player2.velocityY + 0.8;
+
   }
   
   if(gamestate == "gameover"){
