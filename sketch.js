@@ -26,6 +26,7 @@ var mapselected = "notselected", selectrandommap;
 var basesG, basesactive = false;
 var player1baseY, player2baseY;
 var jumplimit, jumplimit2;
+var player1victory = false, player2victory = false;
 
 function preload(){
   backgroundplanetimg = loadImage("backgroundplanet.png");
@@ -580,10 +581,14 @@ function draw(){
     fire2button.visible = false;
     redselectbox.visible = false;
     blueselectbox.visible = false;
-    if(player1health <=0
-    ||player2health <=0){
+    if(player2health <= 0){
+      player1victory = true;
       gamestate = "gameover";
     }
+    if(player1health <= 0){
+        player2victory = true;
+        gamestate = "gameover";
+      }
     
     if(player1.isTouching(player2)
     &&keyWentDown("F")&&!keyWentDown("K")
@@ -685,6 +690,12 @@ function draw(){
   }
   
   if(gamestate == "gameover"){
+    if(player1health <= 0 && player1victory == true){
+      player1health = 10;
+    }
+    if(player2health <= 0 && player2victory == true){
+      player2health = 10;
+    }
     fill('red');
     stroke('darkred');
     textAlign("center");
@@ -896,6 +907,8 @@ function character2(){
 
 function reset(){
   basesG.destroyEach();
+  player1victory = false;
+  player2victory = false;
   jumplimit = windowHeight - 55;
   jumplimit2 = windowHeight + 50;
   basesactive = false;
