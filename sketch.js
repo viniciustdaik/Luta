@@ -130,6 +130,7 @@ function setup(){
 
 function draw(){
   background('white');
+  
   if(mapselected == "Espaço"){
     image(backgroundplanetimg, 0, 0, width, height);
   }
@@ -562,21 +563,20 @@ function draw(){
     &&isBlocking1 == false&&isBlocking2 == false){
       player1health = player1health-10;
     }
-    
-    if(keyDown("W")&&player1.y >= jumplimit && jumplimit2 >= player1.y
-    &&isCrouching1 == false&&isBlocking1 == false){
+    if(keyDown("W") && player1.y >= jumplimit && jumplimit2 >= player1.y
+    && isCrouching1 == false && isBlocking1 == false){
       player1.velocityY = -15;
       isJumping1 = true;
       if(character2selected == "Fantasma"){
         if(left1 == true){
           //player1.changeAnimation("ghost", fantasmajump1);
-        }
+         }
         if(right1 == true){
           //player1.changeAnimation("ghost", fantasmajump2);
         }
       }
     }
-
+    
     if(player1.y >= windowHeight-10){
       isJumping1 = false;
     }
@@ -596,9 +596,8 @@ function draw(){
     if(keyWentUp("S")){
       isCrouching1 = false;
     }
-
-    if(keyDown(UP_ARROW)&&player2.y >= jumplimit && jumplimit2 >= player2.y
-    &&isCrouching2 == false&&isBlocking1 == false){
+    if(keyDown(UP_ARROW) && player2.y >= jumplimit && jumplimit2 >= player2.y
+      && isCrouching2 == false && isBlocking1 == false){
       player2.velocityY = -15;
       isJumping2 = true;
       if(character2selected == "ghost"){
@@ -630,9 +629,8 @@ function draw(){
     if(keyWentUp(DOWN_ARROW)){
       isCrouching2 = false;
     }
-    
-    player1.velocityY = player1.velocityY+0.8;
-    player2.velocityY = player2.velocityY+0.8;
+    player1.velocityY = player1.velocityY + 0.8;
+    player2.velocityY = player2.velocityY + 0.8;
   }
   
   if(gamestate == "gameover"){
@@ -642,6 +640,8 @@ function draw(){
     text("Fim De Jogo!", width/2, height/2);
     fill('gold');
     stroke('green');
+    player1.velocityY = 0;
+    player2.velocityY = 0;
     if(player1health <= 0){
       text("Jogador 2 Ganhou!", width/2, height/2+65);
     }
@@ -895,7 +895,7 @@ function createBases(){
   var player1base = createSprite(width/2 - width/2/2, windowHeight - 185);
   var player2base = createSprite(width/2 + width/2/2, windowHeight - 185);
   var centralbase = createSprite(width/2, windowHeight - 165);
-  jumplimit = windowHeight - 355;
+  jumplimit = windowHeight - 315;//windowHeight - 355
   jumplimit2 = centralbase.y - 55;
   //player1base.debug = true;
   //player2base.debug = true;
