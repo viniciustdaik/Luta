@@ -29,34 +29,34 @@ var jumplimit, jumplimit2;
 
 function preload(){
   backgroundplanetimg = loadImage("backgroundplanet.png");
-  backgroundsnowimg = loadImage("backgroundsnow.png");
-  backgroundforestimg = loadImage("backgroundforest.png");
-  baseimg = loadAnimation("base.png");
-  backgroundbattlezoneimg = loadImage("backgroundbattlezone.gif");
-  birdanm = loadAnimation("./Personagens/Trex-Dinossauros/bird1.png", 
-  "./Personagens/Trex-Dinossauros/bird2.png");
-  birdanm2 = loadAnimation("./Personagens/Trex-Dinossauros/bird1_2.png", 
-  "./Personagens/Trex-Dinossauros/bird2_2.png");
-  donganm = loadAnimation("./Personagens/O Jogo Mais Difícil Do Mundo/enemy.png");
-  ding1anm = loadAnimation("./Personagens/O Jogo Mais Difícil Do Mundo/friendOG.png");//temporário
-  ding2anm = loadAnimation("./Personagens/O Jogo Mais Difícil Do Mundo/friend2OG.png");//temporário
-  trexrunanm = loadAnimation("./Personagens/Trex-Dinossauros/trex1.png",
-  "./Personagens/Trex-Dinossauros/trex3.png",
-  "./Personagens/Trex-Dinossauros/trex4.png");
-  trexidleanm = loadAnimation("./Personagens/Trex-Dinossauros/trex_idle.png");
-  trexidleanm2 = loadAnimation("./Personagens/Trex-Dinossauros/trex_idle_2.png");
-  trexcollided = loadAnimation("./Personagens/Trex-Dinossauros/trex_collided.png");
-  trexcollided2 = loadAnimation("./Personagens/Trex-Dinossauros/trex_collided_2.png");
-  fantasmaidle1 = loadAnimation("./Personagens/Fantasma/ghost-standing.png");
-  fantasmaidle2 = loadAnimation("./Personagens/Fantasma/ghost-standing_2.png");
-  fantasmajump1 = loadAnimation("./Personagens/Fantasma/ghost-jumping.png");
-  fantasmajump2 = loadAnimation("./Personagens/Fantasma/ghost-jumping_2.png")
+  backgroundsnowimg = loadImage("./Mundos/Desviando De Fogo/backgroundsnow.png");
+  backgroundforestimg = loadImage("./Mundos/Arqueiro Épico/backgroundforest.png");
+  baseimg = loadAnimation("./Mundos/Arqueiro Épico/base.png");
+  backgroundbattlezoneimg = loadImage("./Mundos/Invasão Pirata/backgroundbattlezone.gif");
+  birdanm = loadAnimation("./Mundos/Trex-Dinossauros/bird1.png", 
+  "./Mundos/Trex-Dinossauros/bird2.png");
+  birdanm2 = loadAnimation("./Mundos/Trex-Dinossauros/bird1_2.png", 
+  "./Mundos/Trex-Dinossauros/bird2_2.png");
+  donganm = loadAnimation("./Mundos/O Jogo Mais Difícil Do Mundo/enemy.png");
+  ding1anm = loadAnimation("./Mundos/O Jogo Mais Difícil Do Mundo/friendOG.png");//temporário
+  ding2anm = loadAnimation("./Mundos/O Jogo Mais Difícil Do Mundo/friend2OG.png");//temporário
+  trexrunanm = loadAnimation("./Mundos/Trex-Dinossauros/trex1.png", 
+  "./Mundos/Trex-Dinossauros/trex3.png", 
+  "./Mundos/Trex-Dinossauros/trex4.png");
+  trexidleanm = loadAnimation("./Mundos/Trex-Dinossauros/trex_idle.png");
+  trexidleanm2 = loadAnimation("./Mundos/Trex-Dinossauros/trex_idle_2.png");
+  trexcollided = loadAnimation("./Mundos/Trex-Dinossauros/trex_collided.png");
+  trexcollided2 = loadAnimation("./Mundos/Trex-Dinossauros/trex_collided_2.png");
+  fantasmaidle1 = loadAnimation("./Mundos/Fantasma/ghost-standing.png");
+  fantasmaidle2 = loadAnimation("./Mundos/Fantasma/ghost-standing_2.png");
+  fantasmajump1 = loadAnimation("./Mundos/Fantasma/ghost-jumping.png");
+  fantasmajump2 = loadAnimation("./Mundos/Fantasma/ghost-jumping_2.png");
   redselectboximg = loadImage("redhalfselectbox.png");
   blueselectboximg = loadImage("bluehalfselectbox.png");
-  snowmanidleanm = loadAnimation("./Personagens/Desviando De Fogo/Snowman.png");
-  snowmanidleanm2 = loadAnimation("./Personagens/Desviando De Fogo/Snowman_2.png");
-  fireanm = loadAnimation("./Personagens/Desviando De Fogo/fire1small.png");
-  fire2anm = loadAnimation("./Personagens/Desviando De Fogo/fire2small.png");
+  snowmanidleanm = loadAnimation("./Mundos/Desviando De Fogo/Snowman.png");
+  snowmanidleanm2 = loadAnimation("./Mundos/Desviando De Fogo/Snowman_2.png");
+  fireanm = loadAnimation("./Mundos/Desviando De Fogo/fire1small.png");
+  fire2anm = loadAnimation("./Mundos/Desviando De Fogo/fire2small.png");
 }
 
 function setup(){
@@ -729,7 +729,8 @@ function character1(){
     player1.addAnimation("bird", birdanm);//left
     player1.addAnimation("bird", birdanm2);//right
     player1.changeAnimation("bird", birdanm2);//right
-    player1.scale = 0.51;
+    player1.setCollider("rectangle", 0, 0, 90, 185);//bird collision
+    player1.scale = 0.58;
     character1selected = "Pterodáctilo";
   }
   if(ding1buttonover1 == true){
@@ -798,6 +799,7 @@ function character2(){
     player2.addAnimation("bird", birdanm);//left
     player2.addAnimation("bird2", birdanm2);//right
     player2.changeAnimation("bird", birdanm);//left
+    player2.setCollider("rectangle", 0, 0, 90, 185);//bird collision
     player2.scale = 0.51;
     character2selected = "Pterodáctilo";
   }
