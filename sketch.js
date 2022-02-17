@@ -39,7 +39,8 @@ function preload(){
   "./Mundos/Trex-Dinossauros/bird2_2.png");
   donganm = loadAnimation("./Mundos/O Jogo Mais Difícil Do Mundo/enemy.png");
   ding1anm = loadAnimation("./Mundos/O Jogo Mais Difícil Do Mundo/friendOG.png", 
-  "./Mundos/O Jogo Mais Difícil Do Mundo/friendOG.png", 
+  "./Mundos/O Jogo Mais Difícil Do Mundo/friendOG.png",
+  "./Mundos/O Jogo Mais Difícil Do Mundo/friendOG.png",  
   "./Mundos/O Jogo Mais Difícil Do Mundo/friendOG.png", 
   "./Mundos/O Jogo Mais Difícil Do Mundo/friendOG.png", 
   "./Mundos/O Jogo Mais Difícil Do Mundo/friendOG.png", 
@@ -219,6 +220,12 @@ function draw(){
       player1.y = player1baseY - 55;
       player2.y = player2baseY - 55;
     }
+    if(mapselected !== "notselected"){
+      fill('cyan');
+      stroke('green');
+      textAlign("center");
+      text("Mapa Selecionado: "+mapselected+".", width/2, 125);
+    }
     console.log(character1selected, character2selected);
     console.log(ghostbuttonover1, trexbuttonover1, ding1buttonover1, 
     ding2buttonover1 , dongbuttonover1, birdbuttonover1);
@@ -232,41 +239,67 @@ function draw(){
     ||character1selected == "Amigo Do Ding"&&character2selected == "Amigo Do Ding"
     ||character1selected == "dong"&&character2selected == "Dong"){*/
     character1selected !== "notselected" && character2selected !== "notselected"){
-      gamestate = "play";
-    }
-    if(character1selected !== "notselected"){
       fill('cyan');
       stroke('green');
       textAlign("center");
-      text(character1selected+" Selecionado Para Jogador 1", width/2, 75);
+      text("Clique/Toque Para Começar!", width/2, height/2);
+      if(mousePressedOver(player1)
+      ||mousePressedOver(player2)
+      ||mousePressedOver(ghostbutton)
+      ||mousePressedOver(trexbutton)
+      ||mousePressedOver(birdbutton)
+      ||mousePressedOver(ding1button)
+      ||mousePressedOver(ding2button)
+      ||mousePressedOver(dongbutton)
+      ||mousePressedOver(snowmanbutton)
+      ||mousePressedOver(fire1button)
+      ||mousePressedOver(fire2button)
+      ||mousePressedOver(scene)){
+        gamestate = "play";
+      }
     }
-    if(character2selected !== "notselected"){
+    if(character1selected !== "notselected" && character2selected == "notselected"){
       fill('cyan');
       stroke('green');
       textAlign("center");
-      text(character2selected+" Selecionado Para Jogador 2", width/2, 75);
+      text(character1selected+" Selecionado Para Jogador 1.", width/2, 95);
     }
-    if(character1selected == "Fantasma"&&keyWentDown("Y")
-    ||character1selected == "Trex"&&keyWentDown("Y")
-    ||character1selected == "Pterodáctilo"&&keyWentDown("Y")
-    ||character1selected == "Ding"&&keyWentDown("Y")
-    ||character1selected == "Amigo Do Ding"&&keyWentDown("Y")
-    ||character1selected == "Dong"&&keyWentDown("Y")
-    ||character1selected == "Boneco De Neve"&&keyWentDown("Y")
-    ||character1selected == "Fogo Laranja"&&keyWentDown("Y")
-    ||character1selected == "Fogo Vermelho"&&keyWentDown("Y")){
+    if(character2selected !== "notselected" && character1selected == "notselected"){
+      fill('cyan');
+      stroke('green');
+      textAlign("center");
+      text(character2selected+" Selecionado Para Jogador 2.", width/2, 95);
+    }
+    if(character1selected !== "notselected" && character2selected !== "notselected"){
+      fill('cyan');
+      stroke('green');
+      textAlign("center");
+      text(character1selected+ " E "+ character2selected+" Selecionado Para Os Jogadores.", width/2, 155);
+    }  
+    
+    if(/*character1selected == "Fantasma" && keyWentDown("Y")
+    ||character1selected == "Trex" && keyWentDown("Y")
+    ||character1selected == "Pterodáctilo" && keyWentDown("Y")
+    ||character1selected == "Ding" && keyWentDown("Y")
+    ||character1selected == "Amigo Do Ding" && keyWentDown("Y")
+    ||character1selected == "Dong" && keyWentDown("Y")
+    ||character1selected == "Boneco De Neve" && keyWentDown("Y")
+    ||character1selected == "Fogo Laranja" && keyWentDown("Y")
+    ||character1selected == "Fogo Vermelho" && keyWentDown("Y")*/
+    character1selected !== "notselected" && keyWentDown("Y")){
       character1selected = "notselected";
       player1.visible = false;
     }
-    if(character2selected == "Fantasma"&&keyWentDown("O")
-    ||character2selected == "Trex"&&keyWentDown("O")
-    ||character2selected == "Pterodáctilo"&&keyWentDown("O")
-    ||character2selected == "Ding"&&keyWentDown("O")
-    ||character2selected == "Amigo Do Ding"&&keyWentDown("O")
-    ||character2selected == "Dong"&&keyWentDown("O")
-    ||character2selected == "Boneco De Neve"&&keyWentDown("O")
-    ||character2selected == "Fogo Laranja"&&keyWentDown("O")
-    ||character2selected == "Fogo Vermelho"&&keyWentDown("O")){
+    if(/*character2selected == "Fantasma" && keyWentDown("O")
+    ||character2selected == "Trex" && keyWentDown("O")
+    ||character2selected == "Pterodáctilo" && keyWentDown("O")
+    ||character2selected == "Ding" && keyWentDown("O")
+    ||character2selected == "Amigo Do Ding" && keyWentDown("O")
+    ||character2selected == "Dong" && keyWentDown("O")
+    ||character2selected == "Boneco De Neve" && keyWentDown("O")
+    ||character2selected == "Fogo Laranja" && keyWentDown("O")
+    ||character2selected == "Fogo Vermelho" && keyWentDown("O")*/
+    character2selected !== "notselected" && keyWentDown("O")){
       character2selected = "notselected";
       player2.visible = false;
     }
@@ -753,19 +786,19 @@ function character1(){
   if(ding1buttonover1 == true){
     player1.addAnimation("ding1", ding1anm);
     player1.changeAnimation("ding1", ding1anm);
-    player1.scale = 1.8;
+    player1.scale = 2.2;
     character1selected = "Ding";
   }
   if(ding2buttonover1 == true){
     player1.addAnimation("ding2", ding2anm);
     player1.changeAnimation("ding2", ding2anm);
-    player1.scale = 1.8;
+    player1.scale = 2.2;
     character1selected = "Amigo Do Ding";
   }
   if(dongbuttonover1 == true){
     player1.addAnimation("dong", donganm);
     player1.changeAnimation("dong", donganm);
-    player1.scale = 1.8;
+    player1.scale = 2.2;
     character1selected = "Dong";
   }
   if(snowmanbuttonover1 == true){
@@ -824,19 +857,19 @@ function character2(){
   if(ding1buttonover2 == true){
     player2.addAnimation("ding1", ding1anm);
     player2.changeAnimation("ding1", ding1anm);
-    player2.scale = 1.8;
+    player2.scale = 2.2;
     character2selected = "Ding";
   }
   if(ding2buttonover2 == true){
     player2.addAnimation("ding2", ding2anm);
     player2.changeAnimation("ding2", ding2anm);
-    player2.scale = 1.8;
+    player2.scale = 2.2;
     character2selected = "Amigo Do Ding";
   }
   if(dongbuttonover2 == true){
     player2.addAnimation("dong", donganm);
     player2.changeAnimation("dong", donganm);
-    player2.scale = 1.8;
+    player2.scale = 2.2;
     character2selected = "Dong";
   }
   if(snowmanbuttonover2 == true){
