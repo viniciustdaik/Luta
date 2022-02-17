@@ -38,8 +38,24 @@ function preload(){
   birdanm2 = loadAnimation("./Mundos/Trex-Dinossauros/bird1_2.png", 
   "./Mundos/Trex-Dinossauros/bird2_2.png");
   donganm = loadAnimation("./Mundos/O Jogo Mais Difícil Do Mundo/enemy.png");
-  ding1anm = loadAnimation("./Mundos/O Jogo Mais Difícil Do Mundo/friendOG.png");//temporário
-  ding2anm = loadAnimation("./Mundos/O Jogo Mais Difícil Do Mundo/friend2OG.png");//temporário
+  ding1anm = loadAnimation("./Mundos/O Jogo Mais Difícil Do Mundo/friendOG.png", 
+  "./Mundos/O Jogo Mais Difícil Do Mundo/friendOG.png", 
+  "./Mundos/O Jogo Mais Difícil Do Mundo/friendOG.png", 
+  "./Mundos/O Jogo Mais Difícil Do Mundo/friendOG.png", 
+  "./Mundos/O Jogo Mais Difícil Do Mundo/friendOG.png", 
+  "./Mundos/O Jogo Mais Difícil Do Mundo/friendOG.png", 
+  "./Mundos/O Jogo Mais Difícil Do Mundo/friend-closingeyes1.png", 
+  "./Mundos/O Jogo Mais Difícil Do Mundo/friend-closingeyes2.png", 
+  "./Mundos/O Jogo Mais Difícil Do Mundo/friend-closedeyes.png", );
+  ding2anm = loadAnimation("./Mundos/O Jogo Mais Difícil Do Mundo/friend2OG.png", 
+  "./Mundos/O Jogo Mais Difícil Do Mundo/friend2OG.png", 
+  "./Mundos/O Jogo Mais Difícil Do Mundo/friend2OG.png", 
+  "./Mundos/O Jogo Mais Difícil Do Mundo/friend2OG.png", 
+  "./Mundos/O Jogo Mais Difícil Do Mundo/friend2OG.png", 
+  "./Mundos/O Jogo Mais Difícil Do Mundo/friend2OG.png", 
+  "./Mundos/O Jogo Mais Difícil Do Mundo/friend2-closingeyes1.png", 
+  "./Mundos/O Jogo Mais Difícil Do Mundo/friend2-closingeyes2.png", 
+  "./Mundos/O Jogo Mais Difícil Do Mundo/friend2-closedeyes.png");
   trexrunanm = loadAnimation("./Mundos/Trex-Dinossauros/trex1.png", 
   "./Mundos/Trex-Dinossauros/trex3.png", 
   "./Mundos/Trex-Dinossauros/trex4.png");
