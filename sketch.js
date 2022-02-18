@@ -7,9 +7,10 @@ var player1health = 100, player2health = 100;
 var isBlocking1 = false, isBlocking2 = false;
 var left1 = false, right1 = true, left2 = true, right2 = false;
 var backgroundplanetimg, backgroundsnowimg, backgroundforestimg, backgroundbattlezoneimg, baseimg, 
+backgroundpacmanimg, 
 redselectbox, redselectboximg, blueselectbox, blueselectboximg,
 birdanm, birdanm2, 
-ding1anm, ding2anm, donganm, 
+ding1anm, ding2anm, donganm, stackeddongsanm, 
 snowmanidleanm, snowmanidleanm2, fireanm, fire2anm, 
 trexidleanm, trexidleanm2, trexrunanm, trexrunanm2, trexidleanm2, trexcollided, trexcollided2, 
 fantasmaidle1, fantasmaidle2, fantasmajump1, fantasmajump2;
@@ -27,18 +28,25 @@ var basesG, basesactive = false;
 var player1baseY, player2baseY;
 var jumplimit, jumplimit2;
 var player1victory = false, player2victory = false;
+var hitbox1, hitbox2;
+var leftarrow, leftarrowimg, 
+rightarrow, rightarrowimg;
 
 function preload(){
+  leftarrowimg = loadImage("left_arrow.png");
+  rightarrowimg = loadImage("right_arrow.png");
   backgroundplanetimg = loadImage("backgroundplanet.png");
   backgroundsnowimg = loadImage("./Mundos/Desviando De Fogo/backgroundsnow.png");
   backgroundforestimg = loadImage("./Mundos/Arqueiro Épico/backgroundforest.png");
   baseimg = loadAnimation("./Mundos/Arqueiro Épico/base.png");
   backgroundbattlezoneimg = loadImage("./Mundos/Invasão Pirata/backgroundbattlezone.gif");
+  backgroundpacmanimg = loadImage("backgroundpacman.jpg");
   birdanm = loadAnimation("./Mundos/Trex-Dinossauros/bird1.png", 
   "./Mundos/Trex-Dinossauros/bird2.png");
   birdanm2 = loadAnimation("./Mundos/Trex-Dinossauros/bird1_2.png", 
   "./Mundos/Trex-Dinossauros/bird2_2.png");
   donganm = loadAnimation("./Mundos/O Jogo Mais Difícil Do Mundo/enemy.png");
+  stackeddongsanm = loadAnimation("./Mundos/O Jogo Mais Difícil Do Mundo/stackedenemies.png");
   ding1anm = loadAnimation("./Mundos/O Jogo Mais Difícil Do Mundo/friendOG.png", 
   "./Mundos/O Jogo Mais Difícil Do Mundo/friendOG.png",
   "./Mundos/O Jogo Mais Difícil Do Mundo/friendOG.png",  
@@ -79,6 +87,21 @@ function preload(){
 
 function setup(){
   createCanvas(windowWidth, windowHeight);
+  
+  leftarrow = createSprite(width/2 - 85, windowHeight - 45);
+  leftarrow.addImage("leftarrow", leftarrowimg);
+  
+  rightarrow = createSprite(width/2 + 85, windowHeight - 45)
+  rightarrow.addImage("rightarrow", rightarrowimg);
+  
+  hitbox1 = createSprite(width/2 - width/2/2, windowHeight - 55, 20, 20);
+  hitbox2 = createSprite(width/2 + width/2/2, windowHeight - 55, 20, 20);
+  hitbox1.setCollider("rectangle", 0, 0, 120, 120);
+  hitbox2.setCollider("rectangle", 0, 0, 120, 120);
+  hitbox1.visible = false;
+  hitbox2.visible = false;
+  //hitbox1.debug = true;
+  //hitbox1.debug = true;
   
   jumplimit = windowHeight - 55;
   jumplimit2 = windowHeight + 50;
@@ -149,6 +172,20 @@ function setup(){
 function draw(){
   background('white');
   
+  hitbox1.x = player1.x;
+  hitbox1.y = player1.y;
+  hitbox2.x = player2.x;
+  hitbox2.y = player2.y;
+  
+  //soon
+  //if(character1selected == "Fantasma"){
+  //  player1.setCollider("rectangle", +13, +3, 25, 85);//right
+  //}
+  //soon
+  //if(character2selected == "Fantasma"){
+  //  player2.setCollider("rectangle", -13, +3, 25, 85);//left
+  //}
+  
   if(mapselected == "Espaço"){
     image(backgroundplanetimg, 0, 0, width, height);
   }
@@ -160,14 +197,16 @@ function draw(){
   if(mapselected == "Floresta Chuvosa"){
     image(backgroundforestimg, 0, 0, width, height);
     if(basesactive == false){
-      createBases();
+      activateBases();
     }
-    if(player1.isTouching(edges)){
+    if(player1.isTouching(edges[3])){
       player1health = 0;
+      player2victory = true;
       player1.visible = false;
     }
-    if(player2.isTouching(edges)){
+    if(player2.isTouching(edges[3])){
       player2health = 0;
+      player1victory = true;
       player2.visible = false;
     }
     player1.collide(basesG);
@@ -176,6 +215,9 @@ function draw(){
   
   if(mapselected == "Zona De Batalha"){
     image(backgroundbattlezoneimg, 0, 0, width, height);
+  }
+  if(mapselected == "Labirinto Do Pac Man"){
+    image(backgroundpacmanimg, 0, 0, width, height);
   }
   
   textSize(35);
@@ -192,31 +234,33 @@ function draw(){
     right2 = false;
     left2 = true;
   }
-  if(left1 == true&&isJumping1 == false){
-    if(character1selected == "ghost"){
+  /*if(left1 == true && isJumping1 == false){
+    if(character1selected == "Fantasma"){
       player1.changeAnimation("ghost", fantasmaidle1);
       player1.setCollider("rectangle", -15, 30, 185, 245);//ghost collision (left)
     }
   }
-  if(right1 == true&&isJumping1 == false){
-    if(character1selected == "ghost"){
+  if(right1 == true && isJumping1 == false){
+    if(character1selected == "Fantasma"){
       player1.changeAnimation("ghost", fantasmaidle2);
       player1.setCollider("rectangle", 15, 30, 185, 245);//ghost collision (right)
     }
   }
-  if(left2 == true&&isJumping2 == false){
-    if(character2selected == "ghost"){
+  if(left2 == true && isJumping2 == false){
+    if(character2selected == "Fantasma"){
       player2.changeAnimation("ghost", fantasmaidle1);
       player2.setCollider("rectangle", -15, 30, 185, 245);//ghost collision (left)
     }
   }
-  if(right2 == true&&isJumping2 == false){
-    if(character2selected == "ghost"){
+  if(right2 == true && isJumping2 == false){
+    if(character2selected == "Fantasma"){
       player2.changeAnimation("ghost", fantasmaidle2);
       player2.setCollider("rectangle", 15, 30, 185, 245);//ghost collision (right)
     }
-  }
+  }*/
   if(gamestate == "select"){
+    leftarrow.y = windowHeight - 45;
+    rightarrow.y = windowHeight - 45;
     if(mapselected == "Floresta Chuvosa"){
       player1.y = player1baseY - 55;
       player2.y = player2baseY - 55;
@@ -563,7 +607,8 @@ function draw(){
   
   //console.log(windowHeight-10);
   if(gamestate == "play"){
-    
+    leftarrow.y = 45;
+    rightarrow.y = 45;
     fill('lightgreen');
     stroke('lime')
     text("Jogador 1 "+player1health, 45, 45);
@@ -594,7 +639,8 @@ function draw(){
       gamestate = "gameover";
     }
     
-    if(player1.isTouching(player2)
+    if(//hitbox1.isTouching(hitbox2)
+    player1.isTouching(player2)
     &&keyWentDown("F")&&!keyWentDown("K")
     &&isBlocking1 == false&&isBlocking2 == false){
       player2health = player2health-10;
@@ -602,10 +648,16 @@ function draw(){
     
     if(keyWentDown("R")&&isJumping1 == false){
       isBlocking1 = true;
+      if(character1selected == "Dong"){
+        player1.changeAnimation("Dong", donganm);
+      }
     }
     
     if(keyWentUp("R")){
       isBlocking1 = false;
+      if(character1selected == "Dong"){
+        player1.changeAnimation("Dongs", stackeddongsanm);
+      }
     }
     
     if(keyWentDown("I")&&isJumping2 == false){
@@ -616,7 +668,8 @@ function draw(){
       isBlocking2 = false;
     }
     
-    if(player2.isTouching(player1)
+    if(//hitbox2.isTouching(hitbox1)
+    player2.isTouching(player1)
     &&keyWentDown("K")&&!keyWentDown("F")
     &&isBlocking1 == false&&isBlocking2 == false){
       player1health = player1health-10;
@@ -627,10 +680,10 @@ function draw(){
       isJumping1 = true;
       if(character2selected == "Fantasma"){
         if(left1 == true){
-          //player1.changeAnimation("ghost", fantasmajump1);
+          player1.changeAnimation("ghost", fantasmajump1);
          }
         if(right1 == true){
-          //player1.changeAnimation("ghost", fantasmajump2);
+          player1.changeAnimation("ghost", fantasmajump2);
         }
       }
     }
@@ -649,10 +702,16 @@ function draw(){
 
     if(keyWentDown("S")&&isJumping1 == false&&isBlocking1 == false){
       isCrouching1 = true;
+      if(character2selected == "Dong"){
+        player2.changeAnimation("Dong", donganm);
+      }
     }
 
     if(keyWentUp("S")){
       isCrouching1 = false;
+      if(character2selected == "Dong"){
+        player2.changeAnimation("Dongs", stackeddongsanm);
+      }
     }
     if(keyDown(UP_ARROW) && player2.y >= jumplimit && jumplimit2 >= player2.y
       && isCrouching2 == false && isBlocking1 == false){
@@ -694,6 +753,10 @@ function draw(){
   }
   
   if(gamestate == "gameover"){
+    leftarrow.visible = false;
+    leftarrow.y = windowHeight - 45;
+    rightarrow.visible = false;
+    rightarrow.y = windowHeight - 45;
     if(player1health <= 0 && player1victory == true){
       player1health = 10;
     }
@@ -812,7 +875,8 @@ function character1(){
   }
   if(dongbuttonover1 == true){
     player1.addAnimation("dong", donganm);
-    player1.changeAnimation("dong", donganm);
+    player1.addAnimation("dongs", stackeddongsanm);
+    player1.changeAnimation("dongs", stackeddongsanm);
     player1.scale = 2.2;
     character1selected = "Dong";
   }
@@ -883,7 +947,8 @@ function character2(){
   }
   if(dongbuttonover2 == true){
     player2.addAnimation("dong", donganm);
-    player2.changeAnimation("dong", donganm);
+    player2.addAnimation("dongs", stackeddongsanm);
+    player2.changeAnimation("dongs", stackeddongsanm);
     player2.scale = 2.2;
     character2selected = "Dong";
   }
@@ -910,6 +975,10 @@ function character2(){
 }
 
 function reset(){
+  leftarrow.visible = true;
+  leftarrow.y = windowHeight - 45;
+  rightarrow.visible = true;
+  rightarrow.y = windowHeight - 45;
   basesG.destroyEach();
   player1victory = false;
   player2victory = false;
@@ -942,7 +1011,7 @@ function reset(){
 }
 
 function selectmap(){
-  selectrandommap = Math.round(random(1, 4));
+  selectrandommap = Math.round(random(1, 5));
   if(selectrandommap == 1 && frameCount%0.5 == 0 
     && gamestate == "select" && mapselected == "notselected"){
     //image(backgroundplanetimg, 0, 0, width, height);
@@ -963,9 +1032,14 @@ function selectmap(){
     //image(backgroundbattlezoneimg, 0, 0, width, height);
     mapselected = "Zona De Batalha";
   }
+  if(selectrandommap == 5 && frameCount%1 == 0 
+    && gamestate == "select" && mapselected == "notselected"){
+    //image(backgroundbattlezoneimg, 0, 0, width, height);
+    mapselected = "Labirinto Do Pac Man";
+  }
 }
 
-function createBases(){
+function activateBases(){
   var player1base = createSprite(width/2 - width/2/2, windowHeight - 185);
   var player2base = createSprite(width/2 + width/2/2, windowHeight - 185);
   var centralbase = createSprite(width/2, windowHeight - 165);
@@ -982,12 +1056,12 @@ function createBases(){
   player1base.addAnimation("base", baseimg);
   player2base.addAnimation("base", baseimg);
   centralbase.addAnimation("base", baseimg);
-  player1base.scale = 0.08;
-  player2base.scale = 0.08;
-  centralbase.scale = 0.08;
+  player1base.scale = 0.09;
+  player2base.scale = 0.09;
+  centralbase.scale = 0.09;
   basesG.add(centralbase);
   basesG.add(player1base);
   basesG.add(player2base);
   basesactive = true;
-
+  
 }
