@@ -7,7 +7,7 @@ var player1health = 100, player2health = 100;
 var isBlocking1 = false, isBlocking2 = false;
 var left1 = false, right1 = true, left2 = true, right2 = false;
 var backgroundplanetimg, backgroundsnowimg, backgroundforestimg, backgroundbattlezoneimg, baseimg, 
-backgroundpacmanimg, 
+backgroundpacmanimg, backgroundmarioimg, 
 redselectbox, redselectboximg, blueselectbox, blueselectboximg,
 birdanm, birdanm2, 
 ding1anm, ding2anm, donganm, stackeddongsanm, 
@@ -25,6 +25,9 @@ snowmanbuttonover2 = false, fire1buttonover2 = false, fire2buttonover2 = false;
 var character1selected = "notselected", character2selected = "notselected";
 var mapselected = "notselected", selectrandommap;
 var basesG, basesactive = false;
+var wallsG, mazeactive = false;
+var bricksG, marioactive = false, luckyblock1, luckyblock1activated = false, 
+luckyblock2, luckyblock2activated = false, pipe;//, mushroom;
 var player1baseY, player2baseY;
 var jumplimit, jumplimit2;
 var player1victory = false, player2victory = false;
@@ -41,6 +44,7 @@ function preload(){
   baseimg = loadAnimation("./Mundos/Arqueiro Épico/base.png");
   backgroundbattlezoneimg = loadImage("./Mundos/Invasão Pirata/backgroundbattlezone.gif");
   backgroundpacmanimg = loadImage("backgroundpacman.jpg");
+  backgroundmarioimg = loadImage("backgroundmario.jpg");
   birdanm = loadAnimation("./Mundos/Trex-Dinossauros/bird1.png", 
   "./Mundos/Trex-Dinossauros/bird2.png");
   birdanm2 = loadAnimation("./Mundos/Trex-Dinossauros/bird1_2.png", 
@@ -88,10 +92,17 @@ function preload(){
 function setup(){
   createCanvas(windowWidth, windowHeight);
   
-  leftarrow = createSprite(width/2 - 85, windowHeight - 45);
+  luckyblock1 = createSprite(width/2+130, height/2+45, 91, 25);
+  luckyblock2 = createSprite(width/2+37, 89, 77, 25);
+  pipe = createSprite(width/2+660, windowHeight - 265, 161, 25);
+  luckyblock1.visible = false;
+  luckyblock2.visible = false;
+  pipe.visible = false;
+  
+  leftarrow = createSprite(width/2 - 95, windowHeight - 45);
   leftarrow.addImage("leftarrow", leftarrowimg);
   
-  rightarrow = createSprite(width/2 + 85, windowHeight - 45)
+  rightarrow = createSprite(width/2 + 95, windowHeight - 45)
   rightarrow.addImage("rightarrow", rightarrowimg);
   
   hitbox1 = createSprite(width/2 - width/2/2, windowHeight - 55, 20, 20);
@@ -107,6 +118,8 @@ function setup(){
   jumplimit2 = windowHeight + 50;
 
   basesG = new Group();
+  wallsG = new Group();
+  bricksG = new Group();
   
   scene = createSprite(width/2, height/2, width, height);
   scene.visible = false;
@@ -218,6 +231,59 @@ function draw(){
   }
   if(mapselected == "Labirinto Do Pac Man"){
     image(backgroundpacmanimg, 0, 0, width, height);
+    if(mazeactive == false){
+      activateMaze();
+    }
+    if(player1.isTouching(edges[0])){
+      
+    }
+    if(player1.isTouching(edges[2])){
+      
+    }
+    if(player2.isTouching(edges[0])){
+      
+    }
+    if(player2.isTouching(edges[2])){
+      
+    }
+    player1.collide(wallsG);
+    player2.collide(wallsG);
+  }
+  if(mapselected == "Mario"){
+    image(backgroundmarioimg, 0, 0, width, height);
+    if(marioactive == false){
+      activateMario();
+    }
+    player1.collide(bricksG);
+    player2.collide(bricksG);
+    if(marioactive == true){
+      if(player1.isTouching(luckyblock1) && luckyblock1activated == false){
+        player1health = player1health + 10;
+        luckyblock1activated = true;
+        //bricksG.add(luckyblock1);
+      }
+      if(player1.isTouching(luckyblock2) && luckyblock2activated == false){
+        player1health = player1health + 10;
+        luckyblock2activated = true;
+        //bricksG.add(luckyblock2);
+      }
+      if(player2.isTouching(luckyblock1) && luckyblock1activated == false){
+        player2health = player2health + 10;
+        luckyblock1activated = true;
+        //bricksG.add(luckyblock1);
+      }
+      if(player2.isTouching(luckyblock2) && luckyblock2activated == false){
+        player2health = player2health + 10;
+        luckyblock2activated = true;
+        //bricksG.add(luckyblock2);
+      }
+      if(player1.isTouching(pipe) && keyWentDown("S")){
+        
+      }
+      if(player2.isTouching(pipe) && keyWentDown(DOWN_ARROW)){
+        
+      }
+    }
   }
   
   textSize(35);
@@ -272,10 +338,12 @@ function draw(){
       text("Mapa Selecionado: "+mapselected+".", width/2, 125);
     }
     console.log(character1selected, character2selected);
-    console.log(ghostbuttonover1, trexbuttonover1, ding1buttonover1, 
-    ding2buttonover1 , dongbuttonover1, birdbuttonover1);
-    console.log(ghostbuttonover2, trexbuttonover2, ding1buttonover2, 
-    ding2buttonover2, dongbuttonover2, birdbuttonover2);
+    console.log(ghostbuttonover1, trexbuttonover1, birdbuttonover1, ding1buttonover1, 
+    ding2buttonover1, dongbuttonover1, 
+    snowmanbuttonover1, fire1buttonover1, fire2buttonover1);
+    console.log(ghostbuttonover2, trexbuttonover2, birdbuttonover2, ding1buttonover2, 
+    ding2buttonover2, dongbuttonover2, 
+    snowmanbuttonover1, fire1buttonover1, fire2buttonover1);
     selectmap();
     if(/*character1selected == "Fantasma" && character2selected == "Fantasma"
     ||character1selected == "Trex"&&character2selected == "Trex"
@@ -676,15 +744,20 @@ function draw(){
     }
     if(keyDown("W") && player1.y >= jumplimit && jumplimit2 >= player1.y
     && isCrouching1 == false && isBlocking1 == false){
-      player1.velocityY = -15;
-      isJumping1 = true;
-      if(character2selected == "Fantasma"){
-        if(left1 == true){
-          player1.changeAnimation("ghost", fantasmajump1);
-         }
-        if(right1 == true){
-          player1.changeAnimation("ghost", fantasmajump2);
+      if(mapselected !== "Labirinto Do Pac Man"){
+        player1.velocityY = -15;
+        isJumping1 = true;
+        if(character2selected == "Fantasma"){
+          if(left1 == true){
+            player1.changeAnimation("ghost", fantasmajump1);
+          }
+          if(right1 == true){
+            player1.changeAnimation("ghost", fantasmajump2);
+          }
         }
+      }
+      if(mapselected == "Labirinto Do Pac Man"){
+        player1.y = player1.y - 4;
       }
     }
     
@@ -692,38 +765,47 @@ function draw(){
       isJumping1 = false;
     }
     
-    if(keyDown("A")&&isBlocking1 == false&&isCrouching1 == false){
-      player1.x = player1.x-4;
+    if(keyDown("A") && isBlocking1 == false && isCrouching1 == false){
+      player1.x = player1.x - 4;
     }
 
-    if(keyDown("D")&&isBlocking1 == false&&isCrouching1 == false){
-      player1.x = player1.x+4;
+    if(keyDown("D") && isBlocking1 == false && isCrouching1 == false){
+      player1.x = player1.x + 4;
     }
 
-    if(keyWentDown("S")&&isJumping1 == false&&isBlocking1 == false){
+    if(keyWentDown("S") && isJumping1 == false && isBlocking1 == false 
+    && mapselected !== "Labirinto Do Pac Man"){
       isCrouching1 = true;
-      if(character2selected == "Dong"){
-        player2.changeAnimation("Dong", donganm);
+      if(character1selected == "Dong"){
+        player1.changeAnimation("dong", donganm);
       }
     }
+    if(keyDown("S") && mapselected == "Labirinto Do Pac Man"){
+      player1.y = player1.y+4;
+    }
 
-    if(keyWentUp("S")){
+    if(keyWentUp("S") && mapselected !== "Labirinto Do Pac Man"){
       isCrouching1 = false;
-      if(character2selected == "Dong"){
-        player2.changeAnimation("Dongs", stackeddongsanm);
+      if(character1selected == "Dong"){
+        player1.changeAnimation("dongs", stackeddongsanm);
       }
     }
     if(keyDown(UP_ARROW) && player2.y >= jumplimit && jumplimit2 >= player2.y
       && isCrouching2 == false && isBlocking1 == false){
-      player2.velocityY = -15;
-      isJumping2 = true;
-      if(character2selected == "ghost"){
-        if(left2 == true){
-          player2.changeAnimation("ghost", fantasmajump1);
+        if(mapselected !== "Labirinto Do Pac Man"){
+          player2.velocityY = -15;
+          isJumping2 = true;
+          if(character2selected == "ghost"){
+            if(left2 == true){
+              player2.changeAnimation("ghost", fantasmajump1);
+            }
+            if(right2 == true){
+              player2.changeAnimation("ghost", fantasmajump2);
+            }
+          }
         }
-        if(right2 == true){
-          player2.changeAnimation("ghost", fantasmajump2);
-        }
+      if(mapselected == "Labirinto Do Pac Man"){
+        player2.y = player2.y - 4;
       }
     }
     
@@ -739,16 +821,28 @@ function draw(){
       player2.x = player2.x+4;
     }
     
-    if(keyWentDown(DOWN_ARROW)&&isJumping2 == false&&isBlocking2 == false){
+    if(keyWentDown(DOWN_ARROW)&&isJumping2 == false&&isBlocking2 == false
+    && mapselected !== "Labirinto Do Pac Man"){
       isCrouching2 = true;
+      if(character1selected == "Dong"){
+        player2.changeAnimation("dong", donganm);
+      }
     }
-
-    if(keyWentUp(DOWN_ARROW)){
+    if(keyDown(DOWN_ARROW) && mapselected == "Labirinto Do Pac Man"){
+      player2.y = player2.y+4;
+    }
+    if(keyWentUp(DOWN_ARROW) && mapselected !== "Labirinto Do Pac Man"){
       isCrouching2 = false;
+      if(character2selected == "Dong"){
+        player2.changeAnimation("dongs", stackeddongsanm);
+      }
     }
-
-    player1.velocityY = player1.velocityY + 0.8;
-    player2.velocityY = player2.velocityY + 0.8;
+    
+    if(mapselected !== "Labirinto Do Pac Man"){
+      player1.velocityY = player1.velocityY + 0.8;
+      player2.velocityY = player2.velocityY + 0.8;
+    }
+    
 
   }
   
@@ -980,11 +1074,14 @@ function reset(){
   rightarrow.visible = true;
   rightarrow.y = windowHeight - 45;
   basesG.destroyEach();
+  bricksG.destroyEach();
+  wallsG.destroyEach();
   player1victory = false;
   player2victory = false;
   jumplimit = windowHeight - 55;
   jumplimit2 = windowHeight + 50;
   basesactive = false;
+  mazeactive = false;
   gamestate = "select";
   mapselected = "notselected";
   character1selected = "notselected";
@@ -1011,7 +1108,7 @@ function reset(){
 }
 
 function selectmap(){
-  selectrandommap = Math.round(random(1, 5));
+  selectrandommap = Math.round(random(1, 6));
   if(selectrandommap == 1 && frameCount%0.5 == 0 
     && gamestate == "select" && mapselected == "notselected"){
     //image(backgroundplanetimg, 0, 0, width, height);
@@ -1036,6 +1133,11 @@ function selectmap(){
     && gamestate == "select" && mapselected == "notselected"){
     //image(backgroundbattlezoneimg, 0, 0, width, height);
     mapselected = "Labirinto Do Pac Man";
+  }
+  if(selectrandommap == 6 && frameCount%1 == 0 
+    && gamestate == "select" && mapselected == "notselected"){
+    //image(backgroundbattlezoneimg, 0, 0, width, height);
+    mapselected = "Mario";
   }
 }
 
@@ -1064,4 +1166,56 @@ function activateBases(){
   basesG.add(player2base);
   basesactive = true;
   
+}
+
+function activateMaze(){
+  //var wall1 = createSprite();
+  //wall1.debug = true;
+  //wall1.visible = true;
+  //wallsG.add(wall1);
+  mazeactive = true;
+  jumplimit = -55;
+}
+
+function activateMario(){
+  //var mario = createSprite();
+  var brick1 = createSprite(width/2+35, height/2+6, 484, 84);//800
+  var brick2 = createSprite(231, height/2+1, 106, 87);
+  var luckyblock2block = createSprite(width/2+37, 43, 96, 83);
+  var ground = createSprite(width/2, windowHeight - 35, width, 85);
+  var pipeblock = createSprite(width/2+660, windowHeight - 145, 194, 215);
+  //mushroom = createSprite(width/2+421, windowHeight - 135);
+  //mushroom.visible = false;
+  //mushroom.debug = true;
+  jumplimit = 55;
+  /*
+  luckyblock1 = createSprite(width/2+130, height/2+45, 91, 25);
+  luckyblock2 = createSprite(width/2+37, 89, 77, 25);
+  pipe = createSprite(width/2+660, windowHeight - 265, 161, 25);
+  luckyblock1.visible = false;
+  luckyblock2.visible = false;
+  pipe.visible = false;
+  //pipe.debug = true;
+  //luckyblock1.debug = true;
+  */
+  luckyblock2block.visible = false;
+  pipeblock.visible = false;
+  //pipeblock.debug = true;
+  
+  //luckyblock2block.debug = true;
+  brick2.visible = false;
+  //brick2.debug = true;
+  //mario.debug = true;
+  //mario.visible = false;
+  //brick1.debug = true;
+  ground.visible = false;
+  //ground.debug = true;
+  brick1.visible = false;
+  
+  bricksG.add(pipeblock);
+  bricksG.add(luckyblock2block);
+  bricksG.add(ground);
+  bricksG.add(brick1);
+  bricksG.add(brick2);
+  marioactive = true;
 }
