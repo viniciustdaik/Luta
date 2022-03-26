@@ -785,10 +785,10 @@ function draw(){
   
   //console.log(windowHeight-10);
   if(gamestate == "play"){
-    if(isMobile){
+    //if(isMobile){
       leftarrow.y = 45;
       rightarrow.y = 45;
-    }
+    //}
     fill('lightgreen');
     stroke('lime')
     text("Jogador 1 "+player1health, 45, 45);
@@ -984,7 +984,12 @@ function draw(){
       text("Jogador 1 Ganhou!", width/2, height/2+65);
     }
     fill('cyan');
-    text("Clique/Toque Para Jogar De Novo!", width/2, height/2+35);
+    if(!isMobile){
+      text("Clique Na Tela Para Jogar De Novo!", width/2, height/2+35);
+    }else{
+      text("Toque Na Tela Para Jogar De Novo!", width/2, height/2+35);
+    }
+    
     if(mousePressedOver(player1)
     ||mousePressedOver(player2)
     ||mousePressedOver(ghostbutton)
