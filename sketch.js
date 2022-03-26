@@ -7,7 +7,7 @@ var player1health = 100, player2health = 100;
 var isBlocking1 = false, isBlocking2 = false;
 var left1 = false, right1 = true, left2 = true, right2 = false;
 var backgroundplanetimg, backgroundsnowimg, backgroundforestimg, backgroundbattlezoneimg, baseimg, 
-backgroundpacmanimg, backgroundmarioimg, 
+backgroundpacmanimg, pacmanfloor, backgroundmarioimg, 
 redselectbox, redselectboximg, blueselectbox, blueselectboximg,
 birdanm, birdanm2, 
 ding1anm, ding2anm, donganm, stackeddongsanm, 
@@ -19,14 +19,19 @@ snowmanbutton, fire1button, fire2button,
 ghostbuttonover1 = true, trexbuttonover1 = false, ding1buttonover1 = false, 
 ding2buttonover1 = false, dongbuttonover1 = false, birdbuttonover1 = false, 
 snowmanbuttonover1 = false, fire1buttonover1 = false, fire2buttonover1 = false, 
-ghostbuttonover2 = true, trexbuttonover2 = false, ding1buttonover2 = false, 
-ding2buttonover2 = false, dongbuttonover2 = false, birdbuttonover2 = false, 
-snowmanbuttonover2 = false, fire1buttonover2 = false, fire2buttonover2 = false;
+zombiebuttonover1 = false, ghostbuttonover2 = true, trexbuttonover2 = false, 
+ding1buttonover2 = false, ding2buttonover2 = false, dongbuttonover2 = false, 
+birdbuttonover2 = false, snowmanbuttonover2 = false, fire1buttonover2 = false, 
+fire2buttonover2 = false, zombiebuttonover2 = false;
 var character1selected = "notselected", character2selected = "notselected";
 var mapselected = "notselected", selectrandommap;
 var basesG, basesactive = false;
-var wallsG, mazeactive = false;
-var bricksG, marioactive = false, luckyblock1, luckyblock1activated = false, 
+var wallsG, mazeactive = false, 
+teleportleft, teleportright, 
+powerup1, powerup2, powerup3, powerup4, 
+powerup1Taken, powerup2Taken, powerup3Taken, powerup4Taken;
+var bricksG, marioactive = false, 
+luckyblock1, luckyblock1activated = false, 
 luckyblock2, luckyblock2activated = false, pipe;//, mushroom;
 var player1baseY, player2baseY;
 var jumplimit, jumplimit2;
@@ -34,6 +39,9 @@ var player1victory = false, player2victory = false;
 var hitbox1, hitbox2;
 var leftarrow, leftarrowimg, 
 rightarrow, rightarrowimg;
+var WW, WH;
+
+var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
 function preload(){
   leftarrowimg = loadImage("left_arrow.png");
@@ -87,10 +95,42 @@ function preload(){
   snowmanidleanm2 = loadAnimation("./Mundos/Desviando De Fogo/Snowman_2.png");
   fireanm = loadAnimation("./Mundos/Desviando De Fogo/fire1small.png");
   fire2anm = loadAnimation("./Mundos/Desviando De Fogo/fire2small.png");
+  pacmanfloor = loadImage("pacmanfloor.jpg");
 }
 
 function setup(){
   createCanvas(windowWidth, windowHeight);
+
+  WW = windowWidth;
+  WH = windowHeight;
+
+  powerup1Taken = createSprite(windowWidth + 1000, windowHeight);
+  //windowWidth - 51, windowHeight / 2 + 185, 30, 25);
+  powerup1Taken.shapeColor = "black";
+  powerup1Taken.visible = false;
+  powerup1Taken.addImage("floor", pacmanfloor);
+  powerup1Taken.scale = 0.7;
+
+  powerup2Taken = createSprite(windowWidth + 1000, windowHeight);
+  //windowWidth - 51, windowHeight / 2 + 185, 30, 25);
+  powerup2Taken.shapeColor = "black";
+  powerup2Taken.visible = false;
+  powerup2Taken.addImage("floor", pacmanfloor);
+  powerup2Taken.scale = 0.7;
+
+  powerup3Taken = createSprite(windowWidth + 1000, windowHeight);
+  //windowWidth - 51, windowHeight / 2 + 185, 30, 25);
+  powerup3Taken.shapeColor = "black";
+  powerup3Taken.visible = false;
+  powerup3Taken.addImage("floor", pacmanfloor);
+  powerup3Taken.scale = 0.7;
+
+  powerup4Taken = createSprite(windowWidth + 1000, windowHeight);
+  //windowWidth - 51, windowHeight / 2 + 185, 30, 25);
+  powerup4Taken.shapeColor = "black";
+  powerup4Taken.visible = false;
+  powerup4Taken.addImage("floor", pacmanfloor);
+  powerup4Taken.scale = 0.7;
   
   luckyblock1 = createSprite(width/2+130, height/2+45, 91, 25);
   luckyblock2 = createSprite(width/2+37, 89, 77, 25);
@@ -145,7 +185,7 @@ function setup(){
   trexbutton.scale = 0.5;
   
   birdbutton = createSprite(125, 45, 15, 15);
-  birdbutton.addAnimation("bird", birdanm2);
+  birdbutton.addAnimation("bird2", birdanm2);
   birdbutton.scale = 0.51;
   
   ding1button = createSprite(165, 45, 15, 15);
@@ -178,7 +218,38 @@ function setup(){
   player2.visible = false;
   //player1.debug = true;
   //player2.debug = true;
-  
+
+  //Adding Animations For Player 1.
+  //Fantasma.
+  player1.addAnimation("ghost", fantasmaidle1);
+  player1.addAnimation("ghost", fantasmajump1);
+  player1.addAnimation("ghost", fantasmajump2);
+  player1.addAnimation("ghost", fantasmaidle2);
+  //Trex.
+  player1.addAnimation("trex", trexrunanm);
+  player1.addAnimation("trex_collided", trexcollided);
+  player1.addAnimation("trex_collided2", trexcollided2);
+  player1.addAnimation("trex_idle", trexidleanm);
+  player1.addAnimation("trex_idle2", trexidleanm2);
+  //Pterodáctilo.
+  player1.addAnimation("bird", birdanm);//left
+  player1.addAnimation("bird2", birdanm2);//right
+  //Adding Animations For Player 2.
+  //Fantasma.
+  player2.addAnimation("ghost", fantasmaidle2);
+  player2.addAnimation("ghost", fantasmajump1);
+  player2.addAnimation("ghost", fantasmajump2);
+  player2.addAnimation("ghost", fantasmaidle1);
+  //Trex.
+  player2.addAnimation("trex", trexrunanm);
+  player2.addAnimation("trex_collided", trexcollided);
+  player2.addAnimation("trex_collided2", trexcollided2);
+  player2.addAnimation("trex_idle", trexidleanm);
+  player2.addAnimation("trex_idle2", trexidleanm2);
+  //Pterodáctilo.
+  player2.addAnimation("bird", birdanm);//left
+  player2.addAnimation("bird2", birdanm2);//right
+
   edges = createEdgeSprites();
 }
 
@@ -234,17 +305,45 @@ function draw(){
     if(mazeactive == false){
       activateMaze();
     }
-    if(player1.isTouching(edges[0])){
-      
+    if(player1.isTouching(powerup1) && powerup1Taken.visible == false){
+      powerup1Taken.visible = true;
     }
-    if(player1.isTouching(edges[2])){
-      
+    if(player2.isTouching(powerup1) && powerup1Taken.visible == false){
+      powerup1Taken.visible = true;
     }
-    if(player2.isTouching(edges[0])){
-      
+    if(player1.isTouching(powerup2) && powerup2Taken.visible == false){
+      powerup2Taken.visible = true;
     }
-    if(player2.isTouching(edges[2])){
-      
+    if(player2.isTouching(powerup2) && powerup2Taken.visible == false){
+      powerup2Taken.visible = true;
+    }
+    if(player1.isTouching(powerup3) && powerup3Taken.visible == false){
+      powerup3Taken.visible = true;
+    }
+    if(player2.isTouching(powerup3) && powerup3Taken.visible == false){
+      powerup3Taken.visible = true;
+    }
+    if(player1.isTouching(powerup4) && powerup4Taken.visible == false){
+      powerup4Taken.visible = true;
+    }
+    if(player2.isTouching(powerup4) && powerup4Taken.visible == false){
+      powerup4Taken.visible = true;
+    }
+    if(player1.isTouching(teleportleft)){
+      player1.x = WW - 50;
+      console.log("Player1touched=teleportleft")
+    }
+    if(player2.isTouching(teleportleft)){
+      player2.x = WW - 50;
+      console.log("Player2touched=teleportleft")
+    }
+    if(player1.isTouching(teleportright)){
+      player1.x = 50;
+      console.log("Player1touched=teleportright")
+    }
+    if(player2.isTouching(teleportright)){
+      player2.x = 50;
+      console.log("Player2touched=teleportright")
     }
     player1.collide(wallsG);
     player2.collide(wallsG);
@@ -325,9 +424,15 @@ function draw(){
     }
   }*/
   if(gamestate == "select"){
-    leftarrow.y = windowHeight - 45;
-    rightarrow.y = windowHeight - 45;
+    if(isMobile){
+      leftarrow.y = windowHeight - 45;
+      rightarrow.y = windowHeight - 45;
+    }
     if(mapselected == "Floresta Chuvosa"){
+      player1.y = player1baseY - 55;
+      player2.y = player2baseY - 55;
+    }
+    if(mapselected == "Labirinto Do Pac Man"){
       player1.y = player1baseY - 55;
       player2.y = player2baseY - 55;
     }
@@ -355,7 +460,12 @@ function draw(){
       fill('cyan');
       stroke('green');
       textAlign("center");
-      text("Clique/Toque Para Começar!", width/2, height/2);
+      if(isMobile){
+        text("Toque Na Tela Para Começar!", width/2, height/2);
+      }else{
+        text("Clique Na Tela Para Começar!", width/2, height/2);
+      }
+      
       if(mousePressedOver(player1)
       ||mousePressedOver(player2)
       ||mousePressedOver(ghostbutton)
@@ -675,8 +785,10 @@ function draw(){
   
   //console.log(windowHeight-10);
   if(gamestate == "play"){
-    leftarrow.y = 45;
-    rightarrow.y = 45;
+    if(isMobile){
+      leftarrow.y = 45;
+      rightarrow.y = 45;
+    }
     fill('lightgreen');
     stroke('lime')
     text("Jogador 1 "+player1health, 45, 45);
@@ -926,10 +1038,12 @@ function draw(){
 
 function character1(){
   if(ghostbuttonover1 == true){
+    /*
     player1.addAnimation("ghost", fantasmaidle1);
     player1.addAnimation("ghost", fantasmajump1);
     player1.addAnimation("ghost", fantasmajump2);
     player1.addAnimation("ghost", fantasmaidle2);
+    */
     player1.changeAnimation("ghost", fantasmaidle2);
     //player1.setCollider("rectangle", 15, 30, 185, 245);//ghost collision (right) 
     //soon when all collisions are finished
@@ -937,19 +1051,23 @@ function character1(){
     character1selected = "Fantasma";
   }
   if(trexbuttonover1 == true){
+    /*
     player1.addAnimation("trex", trexrunanm);
     player1.addAnimation("trex_collided", trexcollided);
     player1.addAnimation("trex_collided2", trexcollided2);
     player1.addAnimation("trex_idle", trexidleanm);
     player1.addAnimation("trex_idle2", trexidleanm2);
+    */
     player1.changeAnimation("trex", trexrunanm);
     player1.scale = 0.5;
     character1selected = "Trex";
   }
   if(birdbuttonover1 == true){
+    /*
     player1.addAnimation("bird", birdanm);//left
-    player1.addAnimation("bird", birdanm2);//right
-    player1.changeAnimation("bird", birdanm2);//right
+    player1.addAnimation("bird2", birdanm2);//right
+    */
+    player1.changeAnimation("bird2", birdanm2);//right
     //player1.setCollider("rectangle", 0, 0, 90, 185);//bird collision
     //soon when all collisions are finished
     player1.scale = 0.58;
@@ -994,14 +1112,19 @@ function character1(){
     character1selected = "Fogo Vermelho";
   }
   player1.visible = true;
+  if(mapselected == "Labirinto Do Pac Man"){
+    player1.scale = player1.scale / 2;
+  }
 }
 
 function character2(){
   if(ghostbuttonover2 == true){
+    /*
     player2.addAnimation("ghost", fantasmaidle2);
     player2.addAnimation("ghost", fantasmajump1);
     player2.addAnimation("ghost", fantasmajump2);
     player2.addAnimation("ghost", fantasmaidle1);
+    */
     player2.changeAnimation("ghost", fantasmaidle1);
     //player2.setCollider("rectangle", -15, 30, 185, 245);//ghost collision (left)
     //soon when all collisions are finished
@@ -1009,22 +1132,26 @@ function character2(){
     character2selected = "Fantasma";
   }
   if(trexbuttonover2 == true){
+    /*
     player2.addAnimation("trex", trexrunanm);
     player2.addAnimation("trex_collided", trexcollided);
     player2.addAnimation("trex_collided2", trexcollided2);
     player2.addAnimation("trex_idle", trexidleanm);
     player2.addAnimation("trex_idle2", trexidleanm2);
-    player2.changeAnimation("trex", trexrunanm);
+    */
+    //player2.changeAnimation("trex", trexrunanm);
     player2.scale = 0.5;
     character2selected = "Trex";
   }
   if(birdbuttonover2 == true){
+    /*
     player2.addAnimation("bird", birdanm);//left
     player2.addAnimation("bird2", birdanm2);//right
+    */
     player2.changeAnimation("bird", birdanm);//left
     //player2.setCollider("rectangle", 0, 0, 90, 185);//bird collision
     //soon when all collisions are finished
-    player2.scale = 0.51;
+    player2.scale = 0.58;
     character2selected = "Pterodáctilo";
   }
   if(ding1buttonover2 == true){
@@ -1065,7 +1192,13 @@ function character2(){
     player2.scale = 0.075;
     character2selected = "Fogo Vermelho";
   }
+  if(zombiebuttonover2 == true){
+    character2selected = "Zumbi";
+  }
   player2.visible = true;
+  if(mapselected == "Labirinto Do Pac Man"){
+    player2.scale = player2.scale / 2;
+  }
 }
 
 function reset(){
@@ -1108,7 +1241,7 @@ function reset(){
 }
 
 function selectmap(){
-  selectrandommap = Math.round(random(1, 6));
+  selectrandommap = 5;//Math.round(random(1, 6));
   if(selectrandommap == 1 && frameCount%0.5 == 0 
     && gamestate == "select" && mapselected == "notselected"){
     //image(backgroundplanetimg, 0, 0, width, height);
@@ -1169,12 +1302,270 @@ function activateBases(){
 }
 
 function activateMaze(){
-  //var wall1 = createSprite();
+  var center = createSprite(windowWidth / 2, windowHeight / 2 - 25, 200, 80);
+  var BottomEdge = createSprite(windowWidth / 2, windowHeight, windowWidth, 60);
+  var TopEdge = createSprite(windowWidth / 2, 0, windowWidth, 60);
+  var LeftEdge = createSprite(-10, windowHeight / 2, 60, windowHeight);
+  var RightEdge = createSprite(windowWidth + 10, windowHeight / 2, 60, windowHeight);
+  var wall2 = createSprite(60, windowHeight / 2 - 95, 200, 80);
+  var wall3 = createSprite(60, windowHeight / 2 + 45, 200, 80);
+  var wall4 = createSprite(windowWidth - 60, windowHeight / 2 - 95, 200, 80);
+  var wall5 = createSprite(windowWidth - 60, windowHeight / 2 + 45, 200, 80);
+  var wall6 = createSprite(windowWidth - 39, windowHeight / 2 + 220, 55, 20);
+  var wall7 = createSprite(39, windowHeight / 2 + 220, 55, 20);
+  var wall8 = createSprite(windowWidth / 2, 55, 28, 105);
+  var wall9 = createSprite(windowWidth / 2 / 2 + 33, 55, 28, 105);
+  var wall10 = createSprite(windowWidth / 2 + windowWidth / 2 / 2 - 33, 55, 28, 105);
+  var wall11 = createSprite(windowWidth / 2 - 175, 100, 200, 33);
+  var wall12 = createSprite(windowWidth / 2 + 175, 100, 200, 33);
+  var wall13 = createSprite(windowWidth / 2 - 483, 100, 110, 34);
+  var wall14 = createSprite(windowWidth / 2 + 483, 100, 110, 34);
+  var wall15 = createSprite(windowWidth / 2 - 643, 100, 80, 34);
+  var wall16 = createSprite(windowWidth / 2 + 643, 100, 80, 34);
+  var wall17 = createSprite(windowWidth / 2 - 643, 182, 80, 19);
+  var wall18 = createSprite(windowWidth / 2 + 644, 182, 80, 19);
+  var wall19 = createSprite(windowWidth / 2 - 526, 251, 26, 150);
+  var wall20 = createSprite(windowWidth / 2 + 527, 251, 26, 150);
+  var wall21 = createSprite(windowWidth / 2 - 438, 285, 26, 83);
+  var wall22 = createSprite(windowWidth / 2 + 439, 285, 26, 83);
+  var wall23 = createSprite(windowWidth / 2 - 526, 425, 26, 83);
+  var wall24 = createSprite(windowWidth / 2 + 527, 425, 26, 83);
+  var wall25 = createSprite(windowWidth / 2 - 482, 530, 108, 19);
+  var wall26 = createSprite(windowWidth / 2 + 483, 530, 108, 19);
+  var wall27 = createSprite(windowWidth / 2 - 175, 529, 198, 18);
+  var wall28 = createSprite(windowWidth / 2 + 176, 529, 198, 18);
+  var wall29 = createSprite(windowWidth / 2 - 175, 251, 200, 18);
+  var wall30 = createSprite(windowWidth / 2 - 175, 251, 24, 150);
+  var wall31 = createSprite(windowWidth / 2 + 176, 251, 200, 18);
+  var wall32 = createSprite(windowWidth / 2 + 176, 251, 24, 150);
+  var wall33 = createSprite(windowWidth / 2, 215, 25, 84);
+  var wall34 = createSprite(windowWidth / 2, 181, 197, 18);
+  var wall35 = createSprite(windowWidth / 2 + windowWidth / 2 / 2 - 33, 215, 25, 84);
+  var wall36 = createSprite(windowWidth / 2 + windowWidth / 2 / 2 - 33, 181, 197, 18);
+  var wall37 = createSprite(windowWidth / 2 / 2 + 33, 215, 25, 84);
+  var wall38 = createSprite(windowWidth / 2 / 2 + 33, 181, 197, 18);
+  var wall39 = createSprite(windowWidth / 2 / 2 + 33, 215 + 278, 25, 84);
+  var wall40 = createSprite(windowWidth / 2 / 2 + 33, 181 + 278, 197, 18);
+  var wall41 = createSprite(windowWidth / 2, 215 + 278, 25, 84);
+  var wall42 = createSprite(windowWidth / 2, 181 + 278, 197, 18);
+  var wall43 = createSprite(windowWidth / 2 + windowWidth / 2 / 2 - 33, 215 + 278, 25, 84);
+  var wall44 = createSprite(windowWidth / 2 + windowWidth / 2 / 2 - 33, 181 + 278, 197, 18);
+  var wall45 = createSprite(windowWidth / 2 / 2 + 33, 215 + 278 + 140, 25, 84);
+  var wall46 = createSprite(windowWidth / 2 / 2 + 33, 181 + 278 + 140, 197, 18);
+  var wall47 = createSprite(windowWidth / 2, 215 + 278 + 140, 25, 84);
+  var wall48 = createSprite(windowWidth / 2, 181 + 278 + 140, 197, 18);
+  var wall49 = createSprite(windowWidth / 2 + windowWidth / 2 / 2 - 33, 215 + 278 + 140, 25, 84);
+  var wall50 = createSprite(windowWidth / 2 + windowWidth / 2 / 2 - 33, 181 + 278 + 140, 197, 18);
+  var wall51 = createSprite(125, windowHeight / 2 + 150, 75, 20);
+  var wall52 = createSprite(154 , windowHeight / 2 + 185, 25, 85);
+  var wall53 = createSprite(windowWidth - 124, windowHeight / 2 + 150, 75, 20);
+  var wall54 = createSprite(windowWidth - 153, windowHeight / 2 + 185, 25, 85);
+  var wall55 = createSprite(212, windowHeight / 2 + 288, 250, 20);
+  var wall56 = createSprite(241, windowHeight / 2 + 255, 25, 85);
+  var wall57 = createSprite(windowWidth - 212, windowHeight / 2 + 288, 250, 20);
+  var wall58 = createSprite(windowWidth - 241, windowHeight / 2 + 255, 25, 85);
+  var wall59 = createSprite(windowWidth / 2 - 175, windowHeight / 2 + 288, 194, 20);
+  var wall60 = createSprite(windowWidth / 2 - 175, windowHeight / 2 + 250, 25, 75);
+  var wall61 = createSprite(windowWidth / 2 + 176, windowHeight / 2 + 288, 194, 20);
+  var wall62 = createSprite(windowWidth / 2 + 176, windowHeight / 2 + 250, 25, 75);
+  var wall63 = createSprite(windowWidth / 2 + 176, windowHeight / 2 + 45, 25, 85);
+  var wall64 = createSprite(windowWidth / 2 + 218, windowHeight / 2 + 10, 109, 20);
+  var wall65 = createSprite(windowWidth / 2 - 175, windowHeight / 2 + 45, 25, 85);
+  var wall66 = createSprite(windowWidth / 2 - 217, windowHeight / 2 + 10, 109, 20);
+  var wall67 = createSprite(windowWidth / 2 / 2 + 33, 215 + 278 - 137, 25, 84);
+  var wall68 = createSprite(windowWidth / 2 / 2 + 33 + 45, 215 + 278 - 172, 110, 20);
+  var wall69 = createSprite(windowWidth / 2 / 2 + 33 + 45 - 90, 215 + 278 - 103, 110, 20);
+  var wall70 = createSprite(windowWidth / 2 + windowWidth / 2 / 2 - 33, 215 + 278 - 137, 25, 84);
+  var wall71 = createSprite(windowWidth / 2 + windowWidth / 2 / 2 - 33 - 45, 215 + 278 - 172, 110, 20);
+  var wall72 = createSprite(windowWidth / 2  + windowWidth / 2 / 2 - 33 - 45 + 90, 215 + 278 - 103, 110, 20);
+  teleportleft = createSprite(0, windowHeight / 2 - 25, 50, 70);
+  teleportright = createSprite(windowWidth, windowHeight / 2 - 25, 50, 70);
+  teleportleft.shapeColor = "blue";
+  teleportright.shapeColor = "blue";
+  powerup1 = createSprite(windowWidth - 51, windowHeight / 2 + 185, 30, 25);
+  powerup2 = createSprite(51, windowHeight / 2 + 185, 30, 25);
+  powerup3 = createSprite(51, windowHeight / 2 - 279, 30, 25);
+  powerup4 = createSprite(windowWidth - 51, windowHeight / 2 - 279, 30, 25);
   //wall1.debug = true;
-  //wall1.visible = true;
-  //wallsG.add(wall1);
-  mazeactive = true;
+  //wall2.debug = true;
+  center.visible = false;
+  BottomEdge.visible = false;
+  TopEdge.visible = false;
+  LeftEdge.visible = false;
+  RightEdge.visible = false;
+  wall2.visible = false;
+  wall3.visible = false;
+  wall4.visible = false;
+  wall5.visible = false;
+  wall6.visible = false;
+  wall7.visible = false;
+  wall8.visible = false;
+  wall9.visible = false;
+  wall10.visible = false;
+  wall11.visible = false;
+  wall12.visible = false;
+  wall13.visible = false;
+  wall14.visible = false;
+  wall15.visible = false;
+  wall16.visible = false;
+  wall17.visible = false;
+  wall18.visible = false;
+  wall19.visible = false;
+  wall20.visible = false;
+  wall21.visible = false;
+  wall22.visible = false;
+  wall23.visible = false;
+  wall24.visible = false;
+  wall25.visible = false;
+  wall26.visible = false;
+  wall27.visible = false;
+  wall28.visible = false;
+  wall29.visible = false;
+  wall30.visible = false;
+  wall31.visible = false;
+  wall32.visible = false;
+  wall33.visible = false;
+  wall34.visible = false;
+  wall35.visible = false;
+  wall36.visible = false;
+  wall37.visible = false;
+  wall38.visible = false;
+  wall39.visible = false;
+  wall40.visible = false;
+  wall41.visible = false;
+  wall42.visible = false;
+  wall43.visible = false;
+  wall44.visible = false;
+  wall45.visible = false;
+  wall46.visible = false;
+  wall47.visible = false;
+  wall48.visible = false;
+  wall49.visible = false;
+  wall50.visible = false;
+  wall51.visible = false;
+  wall52.visible = false;
+  wall53.visible = false;
+  wall54.visible = false;
+  wall55.visible = false;
+  wall56.visible = false;
+  wall57.visible = false;
+  wall58.visible = false;
+  wall59.visible = false;
+  wall60.visible = false;
+  wall61.visible = false;
+  wall62.visible = false;
+  wall63.visible = false;
+  wall64.visible = false;
+  wall65.visible = false;
+  wall66.visible = false;
+  wall67.visible = false;
+  wall68.visible = false;
+  wall69.visible = false;
+  wall70.visible = false;
+  wall71.visible = false;
+  wall72.visible = false;
+  teleportright.visible = false;
+  teleportleft.visible = false;
+  powerup1.visible = false;
+  powerup2.visible = false;
+  powerup3.visible = false;
+  powerup4.visible = false;
+  wallsG.add(center);
+  wallsG.add(BottomEdge);
+  wallsG.add(TopEdge);
+  wallsG.add(LeftEdge);
+  wallsG.add(RightEdge);
+  wallsG.add(wall2);
+  wallsG.add(wall3);
+  wallsG.add(wall4);
+  wallsG.add(wall5);
+  wallsG.add(wall6);
+  wallsG.add(wall7);
+  wallsG.add(wall8);
+  wallsG.add(wall9);
+  wallsG.add(wall10);
+  wallsG.add(wall11);
+  wallsG.add(wall12);
+  wallsG.add(wall13);
+  wallsG.add(wall14);
+  wallsG.add(wall15);
+  wallsG.add(wall16);
+  wallsG.add(wall17);
+  wallsG.add(wall18);
+  wallsG.add(wall19);
+  wallsG.add(wall20);
+  wallsG.add(wall21);
+  wallsG.add(wall22);
+  wallsG.add(wall23);
+  wallsG.add(wall24);
+  wallsG.add(wall25);
+  wallsG.add(wall26);
+  wallsG.add(wall27);
+  wallsG.add(wall28);
+  wallsG.add(wall29);
+  wallsG.add(wall30);
+  wallsG.add(wall31);
+  wallsG.add(wall32);
+  wallsG.add(wall33);
+  wallsG.add(wall34);
+  wallsG.add(wall35);
+  wallsG.add(wall36);
+  wallsG.add(wall37);
+  wallsG.add(wall38);
+  wallsG.add(wall39);
+  wallsG.add(wall40);
+  wallsG.add(wall41);
+  wallsG.add(wall42);
+  wallsG.add(wall43);
+  wallsG.add(wall44);
+  wallsG.add(wall45);
+  wallsG.add(wall46);
+  wallsG.add(wall47);
+  wallsG.add(wall48);
+  wallsG.add(wall49);
+  wallsG.add(wall50);
+  wallsG.add(wall51);
+  wallsG.add(wall52);
+  wallsG.add(wall53);
+  wallsG.add(wall54);
+  wallsG.add(wall55);
+  wallsG.add(wall56);
+  wallsG.add(wall57);
+  wallsG.add(wall58);
+  wallsG.add(wall59);
+  wallsG.add(wall60);
+  wallsG.add(wall61);
+  wallsG.add(wall62);
+  wallsG.add(wall63);
+  wallsG.add(wall64);
+  wallsG.add(wall65);
+  wallsG.add(wall66);
+  wallsG.add(wall67);
+  wallsG.add(wall68);
+  wallsG.add(wall69);
+  wallsG.add(wall70);
+  wallsG.add(wall71);
+  wallsG.add(wall72);
+  powerup1Taken.x = powerup1.x;
+  powerup1Taken.y = powerup1.y;
+  powerup1Taken.width = powerup1.width + 5;
+  powerup1Taken.height = powerup1.height;
+  powerup2Taken.x = powerup2.x;
+  powerup2Taken.y = powerup2.y;
+  powerup2Taken.width = powerup2.width + 5;
+  powerup2Taken.height = powerup2.height;
+  powerup3Taken.x = powerup3.x;
+  powerup3Taken.y = powerup3.y;
+  powerup3Taken.width = powerup3.width + 5;
+  powerup3Taken.height = powerup3.height;
+  powerup4Taken.x = powerup4.x;
+  powerup4Taken.y = powerup4.y;
+  powerup4Taken.width = powerup4.width + 5;
+  powerup4Taken.height = powerup4.height;
+  player1baseY = windowHeight - 210;
+  player2baseY = windowHeight - 210;
   jumplimit = -55;
+  mazeactive = true;
 }
 
 function activateMario(){
