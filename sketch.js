@@ -100,7 +100,7 @@ function preload(){
 
 function setup(){
   createCanvas(windowWidth, windowHeight);
-
+  
   WW = windowWidth;
   WH = windowHeight;
 
@@ -1139,7 +1139,7 @@ function character2(){
     player2.addAnimation("trex_idle", trexidleanm);
     player2.addAnimation("trex_idle2", trexidleanm2);
     */
-    //player2.changeAnimation("trex", trexrunanm);
+    player2.changeAnimation("trex", trexrunanm);
     player2.scale = 0.5;
     character2selected = "Trex";
   }
@@ -1241,36 +1241,51 @@ function reset(){
 }
 
 function selectmap(){
-  selectrandommap = 5;//Math.round(random(1, 6));
+  selectrandommap = Math.round(random(1, 6));
   if(selectrandommap == 1 && frameCount%0.5 == 0 
     && gamestate == "select" && mapselected == "notselected"){
     //image(backgroundplanetimg, 0, 0, width, height);
     mapselected = "Espaço";
+    basesG.destroyEach();
+    wallsG.destroyEach();
+    bricksG.destroyEach();
   }
   if(selectrandommap == 2 && frameCount%1 == 0 
     && gamestate == "select" && mapselected == "notselected"){
     //image(backgroundsnowimg, 0, 0, width, height);
     mapselected = "Floresta De Neve";
+    basesG.destroyEach();
+    wallsG.destroyEach();
+    bricksG.destroyEach();
   }
   if(selectrandommap == 3 && frameCount%1 == 0 
     && gamestate == "select" && mapselected == "notselected"){
     //image(backgroundforestimg, 0, 0, width, height);
     mapselected = "Floresta Chuvosa";
+    wallsG.destroyEach();
+    bricksG.destroyEach();
   }
   if(selectrandommap == 4 && frameCount%1 == 0 
     && gamestate == "select" && mapselected == "notselected"){
     //image(backgroundbattlezoneimg, 0, 0, width, height);
     mapselected = "Zona De Batalha";
+    basesG.destroyEach();
+    wallsG.destroyEach();
+    bricksG.destroyEach();
   }
   if(selectrandommap == 5 && frameCount%1 == 0 
     && gamestate == "select" && mapselected == "notselected"){
     //image(backgroundbattlezoneimg, 0, 0, width, height);
     mapselected = "Labirinto Do Pac Man";
+    basesG.destroyEach();
+    bricksG.destroyEach();
   }
   if(selectrandommap == 6 && frameCount%1 == 0 
     && gamestate == "select" && mapselected == "notselected"){
     //image(backgroundbattlezoneimg, 0, 0, width, height);
     mapselected = "Mario";
+    basesG.destroyEach();
+    wallsG.destroyEach();
   }
 }
 
