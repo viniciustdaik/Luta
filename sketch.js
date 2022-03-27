@@ -3,7 +3,9 @@ var gamestate = "select";
 var edges, scene;
 var isCrouching1 = false, isCrouching2 = false;
 var isJumping1 = false, isJumping2 = false;
-var player1health = 100, player2health = 100;
+var player1health = 100, player2health = 100, 
+player1Velocity = 4, player2Velocity = 4, 
+player1Strength = 10, player2Strength = 10;
 var isBlocking1 = false, isBlocking2 = false;
 var left1 = false, right1 = true, left2 = true, right2 = false;
 var backgroundplanetimg, backgroundsnowimg, backgroundforestimg, backgroundbattlezoneimg, baseimg, 
@@ -29,7 +31,10 @@ var basesG, basesactive = false;
 var wallsG, mazeactive = false, 
 teleportleft, teleportright, 
 powerup1, powerup2, powerup3, powerup4, 
-powerup1Taken, powerup2Taken, powerup3Taken, powerup4Taken;
+VelocityPowerUp = undefined, StrengthPowerUp = undefined, 
+powerup3Power = undefined, powerup4Power = undefined, 
+powerup1Taken, powerup2Taken, powerup3Taken, powerup4Taken, 
+randomVelocityPowerUp, randomStrengthPowerUp;
 var bricksG, marioactive = false, 
 luckyblock1, luckyblock1activated = false, 
 luckyblock2, luckyblock2activated = false, pipe;//, mushroom;
@@ -272,10 +277,16 @@ function draw(){
   
   if(mapselected == "Espaço"){
     image(backgroundplanetimg, 0, 0, width, height);
+    basesG.destroyEach();
+    wallsG.destroyEach();
+    bricksG.destroyEach();
   }
   
   if(mapselected == "Floresta De Neve"){
     image(backgroundsnowimg, 0, 0, width, height);
+    basesG.destroyEach();
+    wallsG.destroyEach();
+    bricksG.destroyEach();
   }
   
   if(mapselected == "Floresta Chuvosa"){
@@ -283,6 +294,8 @@ function draw(){
     if(basesactive == false){
       activateBases();
     }
+    wallsG.destroyEach();
+    bricksG.destroyEach();
     if(player1.isTouching(edges[3])){
       player1health = 0;
       player2victory = true;
@@ -299,51 +312,104 @@ function draw(){
   
   if(mapselected == "Zona De Batalha"){
     image(backgroundbattlezoneimg, 0, 0, width, height);
+    basesG.destroyEach();
+    wallsG.destroyEach();
+    bricksG.destroyEach();
   }
   if(mapselected == "Labirinto Do Pac Man"){
     image(backgroundpacmanimg, 0, 0, width, height);
     if(mazeactive == false){
       activateMaze();
     }
+    basesG.destroyEach();
+    bricksG.destroyEach();
     if(player1.isTouching(powerup1) && powerup1Taken.visible == false){
       powerup1Taken.visible = true;
+      if(VelocityPowerUp == "powerup1power"){
+        player1Velocity = 6.5;
+      }
+      if(StrengthPowerUp == "powerup1power"){
+        player1Strength = 20;
+      }
     }
     if(player2.isTouching(powerup1) && powerup1Taken.visible == false){
       powerup1Taken.visible = true;
+      if(VelocityPowerUp == "powerup1power"){
+        player2Velocity = 6.5;
+      }
+      if(StrengthPowerUp == "powerup1power"){
+        player2Strength = 20;
+      }
     }
     if(player1.isTouching(powerup2) && powerup2Taken.visible == false){
       powerup2Taken.visible = true;
+      if(VelocityPowerUp == "powerup2power"){
+        player1Velocity = 6.5;
+      }
+      if(StrengthPowerUp == "powerup2power"){
+        player1Strength = 20;
+      }
     }
     if(player2.isTouching(powerup2) && powerup2Taken.visible == false){
       powerup2Taken.visible = true;
+      if(VelocityPowerUp == "powerup2power"){
+        player2Velocity = 6.5;
+      }
+      if(StrengthPowerUp == "powerup2power"){
+        player2Strength = 20;
+      }
     }
     if(player1.isTouching(powerup3) && powerup3Taken.visible == false){
       powerup3Taken.visible = true;
+      if(VelocityPowerUp == "powerup3power"){
+        player1Velocity = 6.5;
+      }
+      if(StrengthPowerUp == "powerup3power"){
+        player1Strength = 20;
+      }
     }
     if(player2.isTouching(powerup3) && powerup3Taken.visible == false){
       powerup3Taken.visible = true;
+      if(VelocityPowerUp == "powerup3power"){
+        player2Velocity = 6.5;
+      }
+      if(StrengthPowerUp == "powerup3power"){
+        player2Strength = 20;
+      }
     }
     if(player1.isTouching(powerup4) && powerup4Taken.visible == false){
       powerup4Taken.visible = true;
+      if(VelocityPowerUp == "powerup4power"){
+        player1Velocity = 6.5;
+      }
+      if(StrengthPowerUp == "powerup4power"){
+        player1Strength = 20;
+      }
     }
     if(player2.isTouching(powerup4) && powerup4Taken.visible == false){
       powerup4Taken.visible = true;
+      if(VelocityPowerUp == "powerup4power"){
+        player2Velocity = 6.5;
+      }
+      if(StrengthPowerUp == "powerup4power"){
+        player2Strength = 20;
+      }
     }
     if(player1.isTouching(teleportleft)){
       player1.x = WW - 50;
-      console.log("Player1touched=teleportleft")
+      //console.log("Player1touched=teleportleft")
     }
     if(player2.isTouching(teleportleft)){
       player2.x = WW - 50;
-      console.log("Player2touched=teleportleft")
+      //console.log("Player2touched=teleportleft")
     }
     if(player1.isTouching(teleportright)){
       player1.x = 50;
-      console.log("Player1touched=teleportright")
+      //console.log("Player1touched=teleportright")
     }
     if(player2.isTouching(teleportright)){
       player2.x = 50;
-      console.log("Player2touched=teleportright")
+      //console.log("Player2touched=teleportright")
     }
     player1.collide(wallsG);
     player2.collide(wallsG);
@@ -353,6 +419,8 @@ function draw(){
     if(marioactive == false){
       activateMario();
     }
+    basesG.destroyEach();
+    wallsG.destroyEach();
     player1.collide(bricksG);
     player2.collide(bricksG);
     if(marioactive == true){
@@ -823,7 +891,7 @@ function draw(){
     player1.isTouching(player2)
     &&keyWentDown("F")&&!keyWentDown("K")
     &&isBlocking1 == false&&isBlocking2 == false){
-      player2health = player2health-10;
+      player2health = player2health - player1Strength;//player2health - 10;
     }
     
     if(keyWentDown("R")&&isJumping1 == false){
@@ -852,7 +920,7 @@ function draw(){
     player2.isTouching(player1)
     &&keyWentDown("K")&&!keyWentDown("F")
     &&isBlocking1 == false&&isBlocking2 == false){
-      player1health = player1health-10;
+      player1health = player1health - player2Strength;//player1health - 10;
     }
     if(keyDown("W") && player1.y >= jumplimit && jumplimit2 >= player1.y
     && isCrouching1 == false && isBlocking1 == false){
@@ -869,7 +937,7 @@ function draw(){
         }
       }
       if(mapselected == "Labirinto Do Pac Man"){
-        player1.y = player1.y - 4;
+        player1.y = player1.y - player1Velocity;//player1.y - 4;
       }
     }
     
@@ -878,11 +946,11 @@ function draw(){
     }
     
     if(keyDown("A") && isBlocking1 == false && isCrouching1 == false){
-      player1.x = player1.x - 4;
+      player1.x = player1.x - player1Velocity;//player1.x - 4;
     }
 
     if(keyDown("D") && isBlocking1 == false && isCrouching1 == false){
-      player1.x = player1.x + 4;
+      player1.x = player1.x + player1Velocity;//player1.x + 4;
     }
 
     if(keyWentDown("S") && isJumping1 == false && isBlocking1 == false 
@@ -893,7 +961,7 @@ function draw(){
       }
     }
     if(keyDown("S") && mapselected == "Labirinto Do Pac Man"){
-      player1.y = player1.y+4;
+      player1.y = player1.y + player1Velocity;//player1.y + 4;
     }
 
     if(keyWentUp("S") && mapselected !== "Labirinto Do Pac Man"){
@@ -917,7 +985,7 @@ function draw(){
           }
         }
       if(mapselected == "Labirinto Do Pac Man"){
-        player2.y = player2.y - 4;
+        player2.y = player2.y - player2Velocity;//player2.y - 4;
       }
     }
     
@@ -926,11 +994,11 @@ function draw(){
     }
     
     if(keyDown(LEFT_ARROW)&&isBlocking2 == false&&isCrouching1 == false){
-      player2.x = player2.x-4;
+      player2.x = player2.x - player2Velocity;//player2.x - 4;
     }
 
     if(keyDown(RIGHT_ARROW)&&isBlocking2 == false&&isCrouching1 == false){
-      player2.x = player2.x+4;
+      player2.x = player2.x + player2Velocity;//player2.x + 4;
     }
     
     if(keyWentDown(DOWN_ARROW)&&isJumping2 == false&&isBlocking2 == false
@@ -941,7 +1009,7 @@ function draw(){
       }
     }
     if(keyDown(DOWN_ARROW) && mapselected == "Labirinto Do Pac Man"){
-      player2.y = player2.y+4;
+      player2.y = player2.y + player2Velocity;//player2.y + 4;
     }
     if(keyWentUp(DOWN_ARROW) && mapselected !== "Labirinto Do Pac Man"){
       isCrouching2 = false;
@@ -1214,6 +1282,10 @@ function reset(){
   basesG.destroyEach();
   bricksG.destroyEach();
   wallsG.destroyEach();
+  player1Velocity = 4;
+  player2Velocity = 4;
+  player1Strength = 10;
+  player2Strength = 10;
   player1victory = false;
   player2victory = false;
   jumplimit = windowHeight - 55;
@@ -1322,90 +1394,138 @@ function activateBases(){
 }
 
 function activateMaze(){
-  var center = createSprite(windowWidth / 2, windowHeight / 2 - 25, 200, 80);
-  var BottomEdge = createSprite(windowWidth / 2, windowHeight, windowWidth, 60);
-  var TopEdge = createSprite(windowWidth / 2, 0, windowWidth, 60);
+  var center = createSprite(width / 2, windowHeight / 2 - 25, 200, 80);
+  var BottomEdge = createSprite(width / 2, windowHeight, width, 60);
+  var TopEdge = createSprite(width / 2, 0, width, 60);
   var LeftEdge = createSprite(-10, windowHeight / 2, 60, windowHeight);
-  var RightEdge = createSprite(windowWidth + 10, windowHeight / 2, 60, windowHeight);
+  var RightEdge = createSprite(width + 10, windowHeight / 2, 60, windowHeight);
   var wall2 = createSprite(60, windowHeight / 2 - 95, 200, 80);
   var wall3 = createSprite(60, windowHeight / 2 + 45, 200, 80);
-  var wall4 = createSprite(windowWidth - 60, windowHeight / 2 - 95, 200, 80);
-  var wall5 = createSprite(windowWidth - 60, windowHeight / 2 + 45, 200, 80);
-  var wall6 = createSprite(windowWidth - 39, windowHeight / 2 + 220, 55, 20);
+  var wall4 = createSprite(width - 60, windowHeight / 2 - 95, 200, 80);
+  var wall5 = createSprite(width - 60, windowHeight / 2 + 45, 200, 80);
+  var wall6 = createSprite(width - 39, windowHeight / 2 + 220, 55, 20);
   var wall7 = createSprite(39, windowHeight / 2 + 220, 55, 20);
-  var wall8 = createSprite(windowWidth / 2, 55, 28, 105);
-  var wall9 = createSprite(windowWidth / 2 / 2 + 33, 55, 28, 105);
-  var wall10 = createSprite(windowWidth / 2 + windowWidth / 2 / 2 - 33, 55, 28, 105);
-  var wall11 = createSprite(windowWidth / 2 - 175, 100, 200, 33);
-  var wall12 = createSprite(windowWidth / 2 + 175, 100, 200, 33);
-  var wall13 = createSprite(windowWidth / 2 - 483, 100, 110, 34);
-  var wall14 = createSprite(windowWidth / 2 + 483, 100, 110, 34);
-  var wall15 = createSprite(windowWidth / 2 - 643, 100, 80, 34);
-  var wall16 = createSprite(windowWidth / 2 + 643, 100, 80, 34);
-  var wall17 = createSprite(windowWidth / 2 - 643, 182, 80, 19);
-  var wall18 = createSprite(windowWidth / 2 + 644, 182, 80, 19);
-  var wall19 = createSprite(windowWidth / 2 - 526, 251, 26, 150);
-  var wall20 = createSprite(windowWidth / 2 + 527, 251, 26, 150);
-  var wall21 = createSprite(windowWidth / 2 - 438, 285, 26, 83);
-  var wall22 = createSprite(windowWidth / 2 + 439, 285, 26, 83);
-  var wall23 = createSprite(windowWidth / 2 - 526, 425, 26, 83);
-  var wall24 = createSprite(windowWidth / 2 + 527, 425, 26, 83);
-  var wall25 = createSprite(windowWidth / 2 - 482, 530, 108, 19);
-  var wall26 = createSprite(windowWidth / 2 + 483, 530, 108, 19);
-  var wall27 = createSprite(windowWidth / 2 - 175, 529, 198, 18);
-  var wall28 = createSprite(windowWidth / 2 + 176, 529, 198, 18);
-  var wall29 = createSprite(windowWidth / 2 - 175, 251, 200, 18);
-  var wall30 = createSprite(windowWidth / 2 - 175, 251, 24, 150);
-  var wall31 = createSprite(windowWidth / 2 + 176, 251, 200, 18);
-  var wall32 = createSprite(windowWidth / 2 + 176, 251, 24, 150);
-  var wall33 = createSprite(windowWidth / 2, 215, 25, 84);
-  var wall34 = createSprite(windowWidth / 2, 181, 197, 18);
-  var wall35 = createSprite(windowWidth / 2 + windowWidth / 2 / 2 - 33, 215, 25, 84);
-  var wall36 = createSprite(windowWidth / 2 + windowWidth / 2 / 2 - 33, 181, 197, 18);
-  var wall37 = createSprite(windowWidth / 2 / 2 + 33, 215, 25, 84);
-  var wall38 = createSprite(windowWidth / 2 / 2 + 33, 181, 197, 18);
-  var wall39 = createSprite(windowWidth / 2 / 2 + 33, 215 + 278, 25, 84);
-  var wall40 = createSprite(windowWidth / 2 / 2 + 33, 181 + 278, 197, 18);
-  var wall41 = createSprite(windowWidth / 2, 215 + 278, 25, 84);
-  var wall42 = createSprite(windowWidth / 2, 181 + 278, 197, 18);
-  var wall43 = createSprite(windowWidth / 2 + windowWidth / 2 / 2 - 33, 215 + 278, 25, 84);
-  var wall44 = createSprite(windowWidth / 2 + windowWidth / 2 / 2 - 33, 181 + 278, 197, 18);
-  var wall45 = createSprite(windowWidth / 2 / 2 + 33, 215 + 278 + 140, 25, 84);
-  var wall46 = createSprite(windowWidth / 2 / 2 + 33, 181 + 278 + 140, 197, 18);
-  var wall47 = createSprite(windowWidth / 2, 215 + 278 + 140, 25, 84);
-  var wall48 = createSprite(windowWidth / 2, 181 + 278 + 140, 197, 18);
-  var wall49 = createSprite(windowWidth / 2 + windowWidth / 2 / 2 - 33, 215 + 278 + 140, 25, 84);
-  var wall50 = createSprite(windowWidth / 2 + windowWidth / 2 / 2 - 33, 181 + 278 + 140, 197, 18);
+  var wall8 = createSprite(width / 2, 55, 28, 115);
+  var wall9 = createSprite(width / 2 / 2 + 33, 55, 28, 115);
+  var wall10 = createSprite(width / 2 + width / 2 / 2 - 33, 55, 28, 115);
+  var wall11 = createSprite(width / 2 - 175, 100, 200, 33);
+  var wall12 = createSprite(width / 2 + 175, 100, 200, 33);
+  var wall13 = createSprite(width / 2 - 483, 100, 110, 34);
+  var wall14 = createSprite(width / 2 + 483, 100, 110, 34);
+  var wall15 = createSprite(width / 2 - 643, 100, 80, 34);
+  var wall16 = createSprite(width / 2 + 643, 100, 80, 34);
+  var wall17 = createSprite(width / 2 - 643, 182, 80, 19);
+  var wall18 = createSprite(width / 2 + 644, 182, 80, 19);
+  var wall19 = createSprite(width / 2 - 526, 251, 26, 150);
+  var wall20 = createSprite(width / 2 + 527, 251, 26, 150);
+  var wall21 = createSprite(width / 2 - 438, 285, 26, 83);
+  var wall22 = createSprite(width / 2 + 439, 285, 26, 83);
+  var wall23 = createSprite(width / 2 - 526, 425, 26, 83);
+  var wall24 = createSprite(width / 2 + 527, 425, 26, 83);
+  var wall25 = createSprite(width / 2 - 482, 530, 108, 19);
+  var wall26 = createSprite(width / 2 + 483, 530, 108, 19);
+  var wall27 = createSprite(width / 2 - 175, 529, 198, 18);
+  var wall28 = createSprite(width / 2 + 176, 529, 198, 18);
+  var wall29 = createSprite(width / 2 - 175, 251, 200, 18);
+  var wall30 = createSprite(width / 2 - 175, 251, 24, 150);
+  var wall31 = createSprite(width / 2 + 176, 251, 200, 18);
+  var wall32 = createSprite(width / 2 + 176, 251, 24, 150);
+  var wall33 = createSprite(width / 2, 215, 25, 84);
+  var wall34 = createSprite(width / 2, 181, 197, 18);
+  var wall35 = createSprite(width / 2 + width / 2 / 2 - 33, 215, 25, 84);
+  var wall36 = createSprite(width / 2 + width / 2 / 2 - 33, 181, 197, 18);
+  var wall37 = createSprite(width / 2 / 2 + 33, 215, 25, 84);
+  var wall38 = createSprite(width / 2 / 2 + 33, 181, 197, 18);
+  var wall39 = createSprite(width / 2 / 2 + 33, 215 + 278, 25, 84);
+  var wall40 = createSprite(width / 2 / 2 + 33, 181 + 278, 197, 18);
+  var wall41 = createSprite(width / 2, 215 + 278, 25, 84);
+  var wall42 = createSprite(width / 2, 181 + 278, 197, 18);
+  var wall43 = createSprite(width / 2 + width / 2 / 2 - 33, 215 + 278, 25, 84);
+  var wall44 = createSprite(width / 2 + width / 2 / 2 - 33, 181 + 278, 197, 18);
+  var wall45 = createSprite(width / 2 / 2 + 33, 215 + 278 + 140, 25, 84);
+  var wall46 = createSprite(width / 2 / 2 + 33, 181 + 278 + 140, 197, 18);
+  var wall47 = createSprite(width / 2, 215 + 278 + 140, 25, 84);
+  var wall48 = createSprite(width / 2, 181 + 278 + 140, 197, 18);
+  var wall49 = createSprite(width / 2 + width / 2 / 2 - 33, 215 + 278 + 140, 25, 84);
+  var wall50 = createSprite(width / 2 + width / 2 / 2 - 33, 181 + 278 + 140, 197, 18);
   var wall51 = createSprite(125, windowHeight / 2 + 150, 75, 20);
-  var wall52 = createSprite(154 , windowHeight / 2 + 185, 25, 85);
-  var wall53 = createSprite(windowWidth - 124, windowHeight / 2 + 150, 75, 20);
-  var wall54 = createSprite(windowWidth - 153, windowHeight / 2 + 185, 25, 85);
+  var wall52 = createSprite(154, windowHeight / 2 + 185, 25, 85);
+  var wall53 = createSprite(width - 124, windowHeight / 2 + 150, 75, 20);
+  var wall54 = createSprite(width - 153, windowHeight / 2 + 185, 25, 85);
   var wall55 = createSprite(212, windowHeight / 2 + 288, 250, 20);
   var wall56 = createSprite(241, windowHeight / 2 + 255, 25, 85);
-  var wall57 = createSprite(windowWidth - 212, windowHeight / 2 + 288, 250, 20);
-  var wall58 = createSprite(windowWidth - 241, windowHeight / 2 + 255, 25, 85);
-  var wall59 = createSprite(windowWidth / 2 - 175, windowHeight / 2 + 288, 194, 20);
-  var wall60 = createSprite(windowWidth / 2 - 175, windowHeight / 2 + 250, 25, 75);
-  var wall61 = createSprite(windowWidth / 2 + 176, windowHeight / 2 + 288, 194, 20);
-  var wall62 = createSprite(windowWidth / 2 + 176, windowHeight / 2 + 250, 25, 75);
-  var wall63 = createSprite(windowWidth / 2 + 176, windowHeight / 2 + 45, 25, 85);
-  var wall64 = createSprite(windowWidth / 2 + 218, windowHeight / 2 + 10, 109, 20);
-  var wall65 = createSprite(windowWidth / 2 - 175, windowHeight / 2 + 45, 25, 85);
-  var wall66 = createSprite(windowWidth / 2 - 217, windowHeight / 2 + 10, 109, 20);
-  var wall67 = createSprite(windowWidth / 2 / 2 + 33, 215 + 278 - 137, 25, 84);
-  var wall68 = createSprite(windowWidth / 2 / 2 + 33 + 45, 215 + 278 - 172, 110, 20);
-  var wall69 = createSprite(windowWidth / 2 / 2 + 33 + 45 - 90, 215 + 278 - 103, 110, 20);
-  var wall70 = createSprite(windowWidth / 2 + windowWidth / 2 / 2 - 33, 215 + 278 - 137, 25, 84);
-  var wall71 = createSprite(windowWidth / 2 + windowWidth / 2 / 2 - 33 - 45, 215 + 278 - 172, 110, 20);
-  var wall72 = createSprite(windowWidth / 2  + windowWidth / 2 / 2 - 33 - 45 + 90, 215 + 278 - 103, 110, 20);
+  var wall57 = createSprite(width - 212, windowHeight / 2 + 288, 250, 20);
+  var wall58 = createSprite(width - 241, windowHeight / 2 + 255, 25, 85);
+  var wall59 = createSprite(width / 2 - 175, windowHeight / 2 + 288, 194, 20);
+  var wall60 = createSprite(width / 2 - 175, windowHeight / 2 + 250, 25, 75);
+  var wall61 = createSprite(width / 2 + 176, windowHeight / 2 + 288, 194, 20);
+  var wall62 = createSprite(width / 2 + 176, windowHeight / 2 + 250, 25, 75);
+  var wall63 = createSprite(width / 2 + 176, windowHeight / 2 + 45, 25, 85);
+  var wall64 = createSprite(width / 2 + 218, windowHeight / 2 + 10, 109, 20);
+  var wall65 = createSprite(width / 2 - 175, windowHeight / 2 + 45, 25, 85);
+  var wall66 = createSprite(width / 2 - 217, windowHeight / 2 + 10, 109, 20);
+  var wall67 = createSprite(width / 2 / 2 + 33, 215 + 278 - 137, 25, 84);
+  var wall68 = createSprite(width / 2 / 2 + 33 + 45, 215 + 278 - 172, 110, 20);
+  var wall69 = createSprite(width / 2 / 2 + 33 + 45 - 90, 215 + 278 - 103, 110, 20);
+  var wall70 = createSprite(width / 2 + width / 2 / 2 - 33, 215 + 278 - 137, 25, 84);
+  var wall71 = createSprite(width / 2 + width / 2 / 2 - 33 - 45, 215 + 278 - 172, 110, 20);
+  var wall72 = createSprite(width / 2  + width / 2 / 2 - 33 - 45 + 90, 215 + 278 - 103, 110, 20);
   teleportleft = createSprite(0, windowHeight / 2 - 25, 50, 70);
-  teleportright = createSprite(windowWidth, windowHeight / 2 - 25, 50, 70);
+  teleportright = createSprite(width, windowHeight / 2 - 25, 50, 70);
   teleportleft.shapeColor = "blue";
   teleportright.shapeColor = "blue";
-  powerup1 = createSprite(windowWidth - 51, windowHeight / 2 + 185, 30, 25);
+  powerup1 = createSprite(width - 51, windowHeight / 2 + 185, 30, 25);
   powerup2 = createSprite(51, windowHeight / 2 + 185, 30, 25);
   powerup3 = createSprite(51, windowHeight / 2 - 279, 30, 25);
-  powerup4 = createSprite(windowWidth - 51, windowHeight / 2 - 279, 30, 25);
+  powerup4 = createSprite(width - 51, windowHeight / 2 - 279, 30, 25);
+  if(VelocityPowerUp == undefined || StrengthPowerUp == undefined){
+    if(VelocityPowerUp == undefined){
+      randomVelocityPowerUp = Math.round(random(1, 4));
+      if(randomVelocityPowerUp == 1){
+        if(StrengthPowerUp != "powerup1power"){
+          VelocityPowerUp = "powerup1power";
+        }
+      }
+      if(randomVelocityPowerUp == 2){
+        if(StrengthPowerUp != "powerup2power"){
+          VelocityPowerUp = "powerup2power";
+        }
+      }
+      if(randomVelocityPowerUp == 3){
+        if(StrengthPowerUp != "powerup3power"){
+          VelocityPowerUp = "powerup3power";
+        }
+      }
+      if(randomVelocityPowerUp == 4){
+        if(StrengthPowerUp != "powerup4power"){
+          VelocityPowerUp = "powerup4power";
+        }
+      }
+    }
+    if(StrengthPowerUp == undefined){
+      randomStrengthPowerUp = Math.round(random(1, 4));
+      if(randomStrengthPowerUp == 1){
+        if(VelocityPowerUp != "powerup1power"){
+          StrengthPowerUp = "powerup1power";
+        }
+      }
+      if(randomStrengthPowerUp == 2){
+        if(VelocityPowerUp != "powerup2power"){
+          StrengthPowerUp = "powerup2power";
+        }
+      }
+      if(randomStrengthPowerUp == 3){
+        if(VelocityPowerUp != "powerup3power"){
+          StrengthPowerUp = "powerup3power";
+        }
+      }
+      if(randomStrengthPowerUp == 4){
+        if(VelocityPowerUp != "powerup4power"){
+          StrengthPowerUp = "powerup4power";
+        }
+      }
+    }
+  }
   //wall1.debug = true;
   //wall2.debug = true;
   center.visible = false;
