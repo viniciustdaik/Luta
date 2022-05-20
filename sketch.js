@@ -2,11 +2,13 @@ var player1, player2;
 var gamestate = "select";
 var edges, scene;
 var isCrouching1 = false, isCrouching2 = false;
+var canCrouch1 = true, canCrouch2 = true;
 var isJumping1 = false, isJumping2 = false;
+var isBlocking1 = false, isBlocking2 = false;
+var canBlock1 = true, canBlock2 = true;
 var player1health = 100, player2health = 100, 
 player1Velocity = 4, player2Velocity = 4, 
 player1Strength = 10, player2Strength = 10;
-var isBlocking1 = false, isBlocking2 = false;
 var left1 = false, right1 = true, left2 = true, right2 = false;
 var backgroundplanetimg, backgroundsnowimg, backgroundforestimg, backgroundbattlezoneimg, baseimg, 
 backgroundpacmanimg, pacmanfloor, backgroundmarioimg, 
@@ -42,9 +44,11 @@ var player1baseY, player2baseY;
 var jumplimit, jumplimit2;
 var player1victory = false, player2victory = false;
 var hitbox1, hitbox2;
+var player1CharacterAndHealth, player2CharacterAndHealth;
 var leftarrow, leftarrowimg, 
 rightarrow, rightarrowimg;
 var WW, WH;
+var eatSound;
 
 var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
@@ -101,13 +105,26 @@ function preload(){
   fireanm = loadAnimation("./Mundos/Desviando De Fogo/fire1small.png");
   fire2anm = loadAnimation("./Mundos/Desviando De Fogo/fire2small.png");
   pacmanfloor = loadImage("pacmanfloor.jpg");
+  eatSound = loadSound("pacman_chomp.wav");
 }
 
 function setup(){
   createCanvas(windowWidth, windowHeight);
+
+  var lutaImg = createImg('backgroundplanet.png');
+  lutaImg.position(width - width - width - width, height - height - height, height);
+  lutaImg.size(150, 150);
   
   WW = windowWidth;
   WH = windowHeight;
+  
+  player1CharacterAndHealth = createImg("");
+  player1CharacterAndHealth.position(45, 45);
+  //player1CharacterAndHealth.visible = false;
+  
+  player2CharacterAndHealth = createImg("");
+  player2CharacterAndHealth.position(width - 45, 45);
+  //player2CharacterAndHealth.visible = false;
 
   powerup1Taken = createSprite(windowWidth + 1000, windowHeight);
   //windowWidth - 51, windowHeight / 2 + 185, 30, 25);
@@ -325,6 +342,7 @@ function draw(){
     bricksG.destroyEach();
     if(player1.isTouching(powerup1) && powerup1Taken.visible == false){
       powerup1Taken.visible = true;
+      eatSound.play();
       if(VelocityPowerUp == "powerup1power"){
         player1Velocity = 6.5;
       }
@@ -334,6 +352,7 @@ function draw(){
     }
     if(player2.isTouching(powerup1) && powerup1Taken.visible == false){
       powerup1Taken.visible = true;
+      eatSound.play();
       if(VelocityPowerUp == "powerup1power"){
         player2Velocity = 6.5;
       }
@@ -343,6 +362,7 @@ function draw(){
     }
     if(player1.isTouching(powerup2) && powerup2Taken.visible == false){
       powerup2Taken.visible = true;
+      eatSound.play();
       if(VelocityPowerUp == "powerup2power"){
         player1Velocity = 6.5;
       }
@@ -352,6 +372,7 @@ function draw(){
     }
     if(player2.isTouching(powerup2) && powerup2Taken.visible == false){
       powerup2Taken.visible = true;
+      eatSound.play();
       if(VelocityPowerUp == "powerup2power"){
         player2Velocity = 6.5;
       }
@@ -361,6 +382,7 @@ function draw(){
     }
     if(player1.isTouching(powerup3) && powerup3Taken.visible == false){
       powerup3Taken.visible = true;
+      eatSound.play();
       if(VelocityPowerUp == "powerup3power"){
         player1Velocity = 6.5;
       }
@@ -370,6 +392,7 @@ function draw(){
     }
     if(player2.isTouching(powerup3) && powerup3Taken.visible == false){
       powerup3Taken.visible = true;
+      eatSound.play();
       if(VelocityPowerUp == "powerup3power"){
         player2Velocity = 6.5;
       }
@@ -379,6 +402,7 @@ function draw(){
     }
     if(player1.isTouching(powerup4) && powerup4Taken.visible == false){
       powerup4Taken.visible = true;
+      eatSound.play();
       if(VelocityPowerUp == "powerup4power"){
         player1Velocity = 6.5;
       }
@@ -388,6 +412,7 @@ function draw(){
     }
     if(player2.isTouching(powerup4) && powerup4Taken.visible == false){
       powerup4Taken.visible = true;
+      eatSound.play();
       if(VelocityPowerUp == "powerup4power"){
         player2Velocity = 6.5;
       }
@@ -889,26 +914,20 @@ function draw(){
     
     if(//hitbox1.isTouching(hitbox2)
     player1.isTouching(player2)
-    &&keyWentDown("F")&&!keyWentDown("K")
-    &&isBlocking1 == false&&isBlocking2 == false){
+    && keyWentDown("F") && !keyWentDown("K")
+    && isBlocking1 == false && isBlocking2 == false){
       player2health = player2health - player1Strength;//player2health - 10;
     }
     
-    if(keyWentDown("R")&&isJumping1 == false){
+    if(keyWentDown("R") && isJumping1 == false && canBlock1 == true){
       isBlocking1 = true;
-      if(character1selected == "Dong"){
-        player1.changeAnimation("Dong", donganm);
-      }
     }
     
     if(keyWentUp("R")){
       isBlocking1 = false;
-      if(character1selected == "Dong"){
-        player1.changeAnimation("Dongs", stackeddongsanm);
-      }
     }
     
-    if(keyWentDown("I")&&isJumping2 == false){
+    if(keyWentDown("I") && isJumping2 == false && canBlock2 == true){
       isBlocking2 = true;
     }
     
@@ -918,8 +937,8 @@ function draw(){
     
     if(//hitbox2.isTouching(hitbox1)
     player2.isTouching(player1)
-    &&keyWentDown("K")&&!keyWentDown("F")
-    &&isBlocking1 == false&&isBlocking2 == false){
+    && keyWentDown("K") && !keyWentDown("F")
+    && isBlocking1 == false && isBlocking2 == false){
       player1health = player1health - player2Strength;//player1health - 10;
     }
     if(keyDown("W") && player1.y >= jumplimit && jumplimit2 >= player1.y
@@ -954,17 +973,17 @@ function draw(){
     }
 
     if(keyWentDown("S") && isJumping1 == false && isBlocking1 == false 
-    && mapselected !== "Labirinto Do Pac Man"){
+    && canCrouch1 == true){
       isCrouching1 = true;
       if(character1selected == "Dong"){
         player1.changeAnimation("dong", donganm);
       }
     }
-    if(keyDown("S") && mapselected == "Labirinto Do Pac Man"){
+    if(keyDown("S") && mapselected == "Labirinto Do Pac Man" && canCrouch1 == false){
       player1.y = player1.y + player1Velocity;//player1.y + 4;
     }
 
-    if(keyWentUp("S") && mapselected !== "Labirinto Do Pac Man"){
+    if(keyWentUp("S")){
       isCrouching1 = false;
       if(character1selected == "Dong"){
         player1.changeAnimation("dongs", stackeddongsanm);
@@ -1001,17 +1020,17 @@ function draw(){
       player2.x = player2.x + player2Velocity;//player2.x + 4;
     }
     
-    if(keyWentDown(DOWN_ARROW)&&isJumping2 == false&&isBlocking2 == false
-    && mapselected !== "Labirinto Do Pac Man"){
+    if(keyWentDown(DOWN_ARROW) && isJumping2 == false && isBlocking2 == false
+    && canCrouch2 == true){
       isCrouching2 = true;
       if(character1selected == "Dong"){
         player2.changeAnimation("dong", donganm);
       }
     }
-    if(keyDown(DOWN_ARROW) && mapselected == "Labirinto Do Pac Man"){
+    if(keyDown(DOWN_ARROW) && mapselected == "Labirinto Do Pac Man" && canCrouch2 == false){
       player2.y = player2.y + player2Velocity;//player2.y + 4;
     }
-    if(keyWentUp(DOWN_ARROW) && mapselected !== "Labirinto Do Pac Man"){
+    if(keyWentUp(DOWN_ARROW)){
       isCrouching2 = false;
       if(character2selected == "Dong"){
         player2.changeAnimation("dongs", stackeddongsanm);
@@ -1279,9 +1298,17 @@ function reset(){
   leftarrow.y = windowHeight - 45;
   rightarrow.visible = true;
   rightarrow.y = windowHeight - 45;
+  canCrouch1 = true;
+  canCrouch2 = true;
+  canBlock1 = true;
+  canBlock2 = true;
   basesG.destroyEach();
   bricksG.destroyEach();
   wallsG.destroyEach();
+  powerup1Taken.visible = false;
+  powerup2Taken.visible = false;
+  powerup3Taken.visible = false;
+  powerup4Taken.visible = false;
   player1Velocity = 4;
   player2Velocity = 4;
   player1Strength = 10;
@@ -1394,6 +1421,8 @@ function activateBases(){
 }
 
 function activateMaze(){
+  canCrouch1 = false;
+  canCrouch2 = false;
   var center = createSprite(width / 2, windowHeight / 2 - 25, 200, 80);
   var BottomEdge = createSprite(width / 2, windowHeight, width, 60);
   var TopEdge = createSprite(width / 2, 0, width, 60);
